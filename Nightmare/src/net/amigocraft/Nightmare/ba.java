@@ -52,11 +52,11 @@ public class ba extends JPanel {
 			e.printStackTrace();
 		}
 		enemies.clear();
-		defineEnemy(posRel(0, 1, 3), bb.floors.get(0).y, "skeleton", 1);
-		defineEnemy(posRel(1, 1, 2), bb.floors.get(1).y, "skeleton", 1);
+		createEnemy(posRel(0, 1, 3), bb.floors.get(0).y, "skeleton", 1);
+		createEnemy(posRel(1, 1, 2), bb.floors.get(1).y, "skeleton", 1);
 	}
 	
-	public static void defineEnemy(int x, int y, String type, int level){
+	public static void createEnemy(int x, int y, String type, int level){
 		enemies.add(new Enemy(type, level, enemySprites.get(type), enemySpritesF.get(type), new int[]{x - (enemyDim.get(type)[0] / 2), y - (enemyDim.get(type)[1])}, 0, enemyDim.get(type)));
 	}
 
@@ -116,37 +116,37 @@ public class ba extends JPanel {
 			}
 
 			// Movement
-			if (e.getFrame() >= eaMovementSpeed){
+			if (e.getMovementFrame() >= eaMovementSpeed){
 				if (right){
 					e.setX(e.getX() + 1);
 				}
 				else if (left){
 					e.setX(e.getX() - 1);
 				}
-				e.setFrame(0);
+				e.setMovementFrame(0);
 			}
 			else {
-				e.setFrame(e.getFrame() + 1);
+				e.setMovementFrame(e.getMovementFrame() + 1);
 			}
 			
 			// animation
-			if (e.getFrame() >= ba.aniSpeed){
+			if (e.getAnimationFrame() >= ba.aniSpeed){
 				List<Image> loop = null;
 				if (e.getDirection() == 0)
 					loop = e.getSprites();
 				else
 					loop = e.getSpritesF();
 				if (ac.inGame){
-					if (e.getStage() < loop.size() - 1){
-						e.setStage(e.getStage() + 1);
+					if (e.getAnimationStage() < loop.size() - 1){
+						e.setAnimationStage(e.getAnimationStage() + 1);
 					}
 					else
-						e.setStage(0);
+						e.setAnimationStage(0);
 				}
-				e.setFrame(0);
+				e.setAnimationFrame(0);
 			}
 			else
-				e.setFrame(e.getFrame() + 1);
+				e.setAnimationFrame(e.getAnimationFrame() + 1);
 
 			if (new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight()).intersects(ad.character)){
 				if (!ad.invincible){

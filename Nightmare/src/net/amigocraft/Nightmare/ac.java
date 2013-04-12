@@ -317,9 +317,9 @@ public class ac extends JPanel implements Runnable {
 			for (Enemy e : ba.enemies){
 				Image sprite = null;
 				if (e.getDirection() == 0)
-					sprite = e.getSpritesF().get(e.getStage());
+					sprite = e.getSpritesF().get(e.getAnimationStage());
 				else
-					sprite = e.getSprites().get(e.getStage());
+					sprite = e.getSprites().get(e.getAnimationStage());
 				g.drawImage(sprite, e.getX() - ad.xs, e.getY() - ad.ys, this);
 			}
 

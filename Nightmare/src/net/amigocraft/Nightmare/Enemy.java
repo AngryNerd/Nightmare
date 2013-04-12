@@ -9,6 +9,7 @@ public class Enemy {
 	private int level;
 	private int aniStage = 0;
 	private int aniFrame = 0;
+	private int movementFrame = 0;
 	private List<Image> sprites;
 	private List<Image> spritesF;
 	private int[] position;
@@ -33,12 +34,16 @@ public class Enemy {
 		return level;
 	}
 	
-	public int getStage(){
+	public int getAnimationStage(){
 		return aniStage;
 	}
 	
-	public int getFrame(){
+	public int getAnimationFrame(){
 		return aniFrame;
+	}
+	
+	public int getMovementFrame(){
+		return movementFrame;
 	}
 	
 	public List<Image> getSprites(){
@@ -85,12 +90,16 @@ public class Enemy {
 		this.level = level;
 	}
 	
-	public void setStage(int stage){
+	public void setAnimationStage(int stage){
 		this.aniStage = stage;
 	}
 	
-	public void setFrame(int frame){
+	public void setAnimationFrame(int frame){
 		this.aniFrame = frame;
+	}
+	
+	public void setMovementFrame(int frame){
+		this.movementFrame = frame;
 	}
 	
 	public void setSprites(List<Image> sprites){

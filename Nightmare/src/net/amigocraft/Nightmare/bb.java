@@ -23,13 +23,15 @@ public class bb extends JPanel {
 
 	// Define floors
 	public static void defineFloors(int level){
-		createFloor(0, 600, 800, level);
-		createFloor(700, 475, 800, level);
-		createFloor(1650, 500, 500, level);
-		createFloor(2300, 650, 1000, level);
-		createFloor(3400, 500, 600, level);
-		createFloor(4050, 600, 900, level);
-		levelEnd.add(new Rectangle(4950, 600 - 150 + floorHeight, 50, 150));
+		if (level == 1){
+			createFloor(0, 600, 800, level);
+			createFloor(700, 475, 800, level);
+			createFloor(1650, 500, 500, level);
+			createFloor(2300, 650, 1000, level);
+			createFloor(3400, 500, 600, level);
+			createFloor(4050, 600, 900, level);
+			levelEnd.add(new Rectangle(4950, 600 - 150 + floorHeight, 50, 150));
+		}
 	}
 
 	public static Rectangle createFloor(int x, int y, int l, int level){
