@@ -204,10 +204,10 @@ public class ac extends JPanel implements Runnable {
 
 		// define custom fonts
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, ac.class.getResourceAsStream("/fonts/dr.TTF")).deriveFont(45f);
-			smallFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getResourceAsStream("/fonts/dr.TTF")).deriveFont(20f);
-			titleFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getResourceAsStream("/fonts/dr.TTF")).deriveFont(85f);
-			btnFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getResourceAsStream("/fonts/dr.TTF")).deriveFont(25f);
+			font = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(45f);
+			smallFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(20f);
+			titleFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(85f);
+			btnFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(25f);
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
@@ -314,32 +314,13 @@ public class ac extends JPanel implements Runnable {
 
 			// enemies
 			g.setColor(Color.WHITE);
-			for (int i = 0; i < ba.enemies.size(); i++){
-				String type = ba.enemyType.get(i);
-				if (ba.aniFrame.get(i) >= ba.aniSpeed){
-					List<Image> loop = null;
-					if (ba.dir.get(i) == 0)
-						loop = ba.enemySpritesF.get(type);
-					else
-						loop = ba.enemySprites.get(type);
-					if (inGame){
-						if (ba.aniStage.get(i) < loop.size() - 1){
-							ba.aniStage.set(i, ba.aniStage.get(i) + 1);
-						}
-						else if (ba.aniStage.get(i) == loop.size() - 1){
-							ba.aniStage.set(i, 0);
-						}
-						ba.aniFrame.set(i, 0);
-					}
-				}
-				else
-					ba.aniFrame.set(i, ba.aniFrame.get(i) + 1);
+			for (Enemy e : ba.enemies){
 				Image sprite = null;
-				if (ba.dir.get(i) == 0)
-					sprite = ba.enemySpritesF.get(type).get(ba.aniStage.get(i));
+				if (e.getDirection() == 0)
+					sprite = e.getSpritesF().get(e.getStage());
 				else
-					sprite = ba.enemySprites.get(type).get(ba.aniStage.get(i));
-				g.drawImage(sprite, ba.enemies.get(i).x - ad.xs, ba.enemies.get(i).y - ad.ys, this);
+					sprite = e.getSprites().get(e.getStage());
+				g.drawImage(sprite, e.getX() - ad.xs, e.getY() - ad.ys, this);
 			}
 
 			// floors
@@ -445,14 +426,16 @@ public class ac extends JPanel implements Runnable {
 			ad.endLevel = false;
 			String text = "Level Complete!";
 			g.drawString(text, centerText(g, text), aa.height / 2);
+			paintImmediately(0, 0, aa.width, aa.height);
 			try {
 				Thread.sleep(2000);
 			}
 			catch (InterruptedException e){
 				e.printStackTrace();
 			}
-			level += 1;
+			//level += 1;
 			resetLevel();
+			ad.dead = false;
 		}
 		
 		if (win){

@@ -89,13 +89,13 @@ public class ad {
 
 	public static Rectangle defineChar(){
 		try {
-			boyStandFront = ImageIO.read(ad.class.getResourceAsStream("/images/BoyStandFront.gif"));
-			boyStandLeft = ImageIO.read(ad.class.getResourceAsStream("/images/BoyStandLeft.gif"));
-			boyWalkLeft1 = ImageIO.read(ad.class.getResourceAsStream("/images/BoyWalkLeft1.gif"));
-			boyWalkLeft2 = ImageIO.read(ad.class.getResourceAsStream("/images/BoyWalkLeft2.gif"));
-			boyStandRight = ImageIO.read(ad.class.getResourceAsStream("/images/BoyStandRight.gif"));
-			boyWalkRight1 = ImageIO.read(ad.class.getResourceAsStream("/images/BoyWalkRight1.gif"));
-			boyWalkRight2 = ImageIO.read(ad.class.getResourceAsStream("/images/BoyWalkRight2.gif"));
+			boyStandFront = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandFront.gif"));
+			boyStandLeft = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandLeft.gif"));
+			boyWalkLeft1 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft1.gif"));
+			boyWalkLeft2 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft2.gif"));
+			boyStandRight = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandRight.gif"));
+			boyWalkRight1 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkRight1.gif"));
+			boyWalkRight2 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkRight2.gif"));
 			walkLeft.add(boyWalkLeft1);
 			walkLeft.add(boyWalkLeft2);
 			walkRight.add(boyWalkRight1);
