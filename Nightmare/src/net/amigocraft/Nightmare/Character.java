@@ -1,5 +1,5 @@
 /** CHARACTER **/
-package net.amigocraft.Nightmare;
+package net.amigocraft.nightmare;
 
 import java.awt.Image;
 import java.awt.Point;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-public class ad {
+public class Character {
 
 	public static Rectangle character;
 
@@ -43,8 +43,8 @@ public class ad {
 	public static int jumpFreezeFrame = 0;
 	public static int xs = 0;
 	public static int ys = 0;
-	public static int centerX = aa.width / 2 + xs;
-	public static int centerY = aa.width / 2 + ys;
+	public static int centerX = Main.width / 2 + xs;
+	public static int centerY = Main.width / 2 + ys;
 	public static int invincibleTick = 0;
 	public static int knockbackFrame = 0;
 	public static int knockbackTick = 0;
@@ -83,19 +83,19 @@ public class ad {
 	public static boolean knockback = false;
 	public static boolean endLevel = false;
 	public static int health = defaultHealth;
-	public static int backgroundSpeed = ad.movementSpeed * starSpeed;
+	public static int backgroundSpeed = Character.movementSpeed * starSpeed;
 
 	public static int lives = defaultLives;
 
 	public static Rectangle defineChar(){
 		try {
-			boyStandFront = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandFront.gif"));
-			boyStandLeft = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandLeft.gif"));
-			boyWalkLeft1 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft1.gif"));
-			boyWalkLeft2 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft2.gif"));
-			boyStandRight = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandRight.gif"));
-			boyWalkRight1 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkRight1.gif"));
-			boyWalkRight2 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkRight2.gif"));
+			boyStandFront = ImageIO.read(Character.class.getClassLoader().getResourceAsStream("images/BoyStandFront.gif"));
+			boyStandLeft = ImageIO.read(Character.class.getClassLoader().getResourceAsStream("images/BoyStandLeft.gif"));
+			boyWalkLeft1 = ImageIO.read(Character.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft1.gif"));
+			boyWalkLeft2 = ImageIO.read(Character.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft2.gif"));
+			boyStandRight = ImageIO.read(Character.class.getClassLoader().getResourceAsStream("images/BoyStandRight.gif"));
+			boyWalkRight1 = ImageIO.read(Character.class.getClassLoader().getResourceAsStream("images/BoyWalkRight1.gif"));
+			boyWalkRight2 = ImageIO.read(Character.class.getClassLoader().getResourceAsStream("images/BoyWalkRight2.gif"));
 			walkLeft.add(boyWalkLeft1);
 			walkLeft.add(boyWalkLeft2);
 			walkRight.add(boyWalkRight1);
@@ -105,7 +105,7 @@ public class ad {
 		catch (IOException ex){
 			System.out.println(ex);
 		}
-		return character = new Rectangle((aa.width / 2) - (characterWidth / 2), (aa.height / 2) - (characterHeight / 2), characterWidth, characterHeight);
+		return character = new Rectangle((Main.width / 2) - (characterWidth / 2), (Main.height / 2) - (characterHeight / 2), characterWidth, characterHeight);
 	}
 
 	public static void run(){
@@ -120,20 +120,20 @@ public class ad {
 			catch (Exception e){
 				e.printStackTrace();
 			}
-			character.x = aa.width / 2;
-			character.y = aa.height / 2;
+			character.x = Main.width / 2;
+			character.y = Main.height / 2;
 			xs = 0;
 			ys = 0;
 			backgroundLoc = 0;
-			centerX = aa.width / 2 + xs;
-			centerY = aa.width / 2 + ys;
-			ba.defineEnemies();
+			centerX = Main.width / 2 + xs;
+			centerY = Main.width / 2 + ys;
+			Enemies.defineEnemies();
 			if (lives > 0)
 				lives -= 1;
 			else {
-				lives = ad.defaultLives;
-				ac.menu = true;
-				ac.inGame = false;
+				lives = Character.defaultLives;
+				MainCanvas.menu = true;
+				MainCanvas.inGame = false;
 			}
 			health = defaultHealth;
 			dead = false;
@@ -164,7 +164,7 @@ public class ad {
 					jumpSpeedFrame += 1;
 			}
 		}
-		if ((ba.containsFeet(foot1) || ba.containsFeet(foot2)) || jumping)
+		if ((Enemies.containsFeet(foot1) || Enemies.containsFeet(foot2)) || jumping)
 			falling = false;
 		else
 			falling = true;
@@ -323,13 +323,13 @@ public class ad {
 		}
 
 		// check if character is at level end
-		if (bb.levelEnd.size() > ac.level && !endLevel && !ac.win){
-			if (bb.levelEnd.get(ac.level - 1).contains(new Point(character.x + character.width, character.y + character.height))){
+		if (Platforms.levelEnd.size() > MainCanvas.level && !endLevel && !MainCanvas.win){
+			if (Platforms.levelEnd.get(MainCanvas.level - 1).contains(new Point(character.x + character.width, character.y + character.height))){
 				endLevel = true;
 			}
 		}
-		else if (bb.levelEnd.size() == ac.level && !endLevel && !ac.win){
-			if (bb.levelEnd.get(ac.level - 1).contains(new Point(character.x + character.width, character.y + character.height))){
+		else if (Platforms.levelEnd.size() == MainCanvas.level && !endLevel && !MainCanvas.win){
+			if (Platforms.levelEnd.get(MainCanvas.level - 1).contains(new Point(character.x + character.width, character.y + character.height))){
 				endLevel = true;
 			}
 		}
