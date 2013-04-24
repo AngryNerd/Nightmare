@@ -1,5 +1,5 @@
 /** PLATFORMS **/
-package net.amigocraft.Nightmare;
+package net.amigocraft.nightmare;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -7,13 +7,13 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-public class bb extends JPanel {
+public class Platforms extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	public static int floorHeight = 20;
-	public static int centerX = ad.centerX;
-	public static int centerY = ad.centerY;
+	public static int centerX = Character.centerX;
+	public static int centerY = Character.centerY;
 
 	public static boolean objectsDefined = false;
 
