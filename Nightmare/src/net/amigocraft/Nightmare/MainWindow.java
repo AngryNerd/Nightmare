@@ -1,16 +1,16 @@
 /** JFRAME **/
-package net.amigocraft.Nightmare;
+package net.amigocraft.nightmare;
 
 import java.awt.*;
 import javax.swing.*;
 
-public class ab extends JFrame {
+public class MainWindow extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-	public ac panel;
+	public MainCanvas panel;
 	
-	public ab(){
-		panel = new ac(this);
+	public MainWindow(){
+		panel = new MainCanvas(this);
 		setLayout(new GridLayout(1, 1, 0, 0));
 		add(panel);
 	}
