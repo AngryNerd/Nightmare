@@ -1,5 +1,5 @@
 /** GRAPHICS AND KEY LISTENER **/
-package net.amigocraft.Nightmare;
+package net.amigocraft.nightmare;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -16,7 +16,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-public class ac extends JPanel implements Runnable {
+public class MainCanvas extends JPanel implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -41,15 +41,15 @@ public class ac extends JPanel implements Runnable {
 	public static int level = 1;
 
 	// define main menu buttons
-	Rectangle playBtn = new Rectangle(aa.width / 2 - 80, 175, 160, 40);
-	Rectangle tutBtn = new Rectangle(aa.width / 2 - 80, 245, 160, 40);
-	Rectangle lbBtn = new Rectangle(aa.width / 2 - 80, 315, 160, 40);
-	Rectangle quitBtn = new Rectangle(aa.width / 2 - 80, aa.height - 90, 160, 40);
+	Rectangle playBtn = new Rectangle(Main.width / 2 - 80, 175, 160, 40);
+	Rectangle tutBtn = new Rectangle(Main.width / 2 - 80, 245, 160, 40);
+	Rectangle lbBtn = new Rectangle(Main.width / 2 - 80, 315, 160, 40);
+	Rectangle quitBtn = new Rectangle(Main.width / 2 - 80, Main.height - 90, 160, 40);
 
 	// define pause menu buttons
-	Rectangle resBtn = new Rectangle(aa.width / 2 - 80, 150, 160, 40);
-	Rectangle restartBtn = new Rectangle(aa.width / 2 - 80, 220, 160, 40);
-	Rectangle pauseQuitBtn = new Rectangle(aa.width / 2 - 80, 290, 160, 40);
+	Rectangle resBtn = new Rectangle(Main.width / 2 - 80, 150, 160, 40);
+	Rectangle restartBtn = new Rectangle(Main.width / 2 - 80, 220, 160, 40);
+	Rectangle pauseQuitBtn = new Rectangle(Main.width / 2 - 80, 290, 160, 40);
 
 	Font font = new Font("Verdana", Font.BOLD, 30);
 	Font smallFont = new Font("Verdana", Font.BOLD, 10);
@@ -58,26 +58,26 @@ public class ac extends JPanel implements Runnable {
 
 	public Thread game;
 
-	public ac(ab f){
+	public MainCanvas(MainWindow f){
 
 		// Key Listener
 		f.addKeyListener(new KeyAdapter(){
 			public void keyPressed(KeyEvent e){
-				if (e.getKeyCode() == ad.keyLeft || e.getKeyCode() == ad.keyLeft2){
-					ad.left = true;
-					ad.right = false;
+				if (e.getKeyCode() == Character.keyLeft || e.getKeyCode() == Character.keyLeft2){
+					Character.left = true;
+					Character.right = false;
 				}
 
-				if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
-					ad.right = true;
-					ad.left = false;
+				if (e.getKeyCode() == Character.keyRight || e.getKeyCode() == Character.keyRight2){
+					Character.right = true;
+					Character.left = false;
 				}
-				if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
-					if (!ad.falling){
-						ad.jumping = true;
+				if (e.getKeyCode() == Character.keyJump || e.getKeyCode() == Character.keyJump2 || e.getKeyCode() == Character.keyJump3){
+					if (!Character.falling){
+						Character.jumping = true;
 					}
 				}
-				if (e.getKeyCode() == ad.keyPause){
+				if (e.getKeyCode() == Character.keyPause){
 					if (inGame && !paused){
 						inGame = false;
 						paused = true;
@@ -118,17 +118,17 @@ public class ac extends JPanel implements Runnable {
 			}
 
 			public void keyReleased(KeyEvent e){
-				if (e.getKeyCode() == ad.keyLeft || e.getKeyCode() == ad.keyLeft2){
-					ad.left = false;
-					if (!ad.right){
-						ad.lastDir = 0;
+				if (e.getKeyCode() == Character.keyLeft || e.getKeyCode() == Character.keyLeft2){
+					Character.left = false;
+					if (!Character.right){
+						Character.lastDir = 0;
 					}
 				}
 
-				if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
-					ad.right = false;
-					if (!ad.left){
-						ad.lastDir = 1;
+				if (e.getKeyCode() == Character.keyRight || e.getKeyCode() == Character.keyRight2){
+					Character.right = false;
+					if (!Character.left){
+						Character.lastDir = 1;
 					}
 				}
 
@@ -139,7 +139,7 @@ public class ac extends JPanel implements Runnable {
 		f.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e){
 				if (e.getButton() == 1){
-					Point mousePos = new Point(aa.f.getMousePosition().x, aa.f.getMousePosition().y - 24);
+					Point mousePos = new Point(Main.f.getMousePosition().x, Main.f.getMousePosition().y - 24);
 					if (menu || paused){
 						if (playBtn.contains(mousePos) && menu){
 							menu = false;
@@ -148,7 +148,7 @@ public class ac extends JPanel implements Runnable {
 						}
 						else if (quitBtn.contains(mousePos) && menu){
 							inGame = false;
-							aa.pullThePlug();
+							Main.pullThePlug();
 						}
 						else if (resBtn.contains(mousePos) && paused){
 							paused = false;
@@ -157,14 +157,14 @@ public class ac extends JPanel implements Runnable {
 						else if (restartBtn.contains(mousePos) && paused){
 							paused = false;
 							inGame = true;
-							ad.character.x = aa.width / 2;
-							ad.character.y = aa.height / 2;
-							ad.xs = 0;
-							ad.ys = 0;
-							ad.backgroundLoc = 0;
-							ad.centerX = aa.width / 2 + ad.xs;
-							ad.centerY = aa.width / 2 + ad.ys;
-							ba.defineEnemies();
+							Character.character.x = Main.width / 2;
+							Character.character.y = Main.height / 2;
+							Character.xs = 0;
+							Character.ys = 0;
+							Character.backgroundLoc = 0;
+							Character.centerX = Main.width / 2 + Character.xs;
+							Character.centerY = Main.width / 2 + Character.ys;
+							Enemies.defineEnemies();
 						}
 						else if (pauseQuitBtn.contains(mousePos) && paused){
 							paused = false;
@@ -185,29 +185,29 @@ public class ac extends JPanel implements Runnable {
 
 	// Define objects
 	public void defineObjects(){
-		ad.character = ad.defineChar();
-		bb.defineFloors(level);
-		ba.defineEnemies();
+		Character.character = Character.defineChar();
+		Platforms.defineFloors(level);
+		Enemies.defineEnemies();
 		// define star locations
-		for (int i = 0; i < ad.starNumber; i++){
-			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
-			int y = 0 + (int)(Math.random() * ((aa.height - 0) + 1));
-			ad.starX.add(x);
-			ad.starY.add(y);
+		for (int i = 0; i < Character.starNumber; i++){
+			int x = 0 + (int)(Math.random() * ((Main.width - 0) + 1));
+			int y = 0 + (int)(Math.random() * ((Main.height - 0) + 1));
+			Character.starX.add(x);
+			Character.starY.add(y);
 		}
-		for (int i = 0; i < ad.starNumber; i++){
-			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
-			int y = 0 + (int)(Math.random() * ((aa.height - 0) + 1));
+		for (int i = 0; i < Character.starNumber; i++){
+			int x = 0 + (int)(Math.random() * ((Main.width - 0) + 1));
+			int y = 0 + (int)(Math.random() * ((Main.height - 0) + 1));
 			menuStarX.add(x);
 			menuStarY.add(y);
 		}
 
 		// define custom fonts
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(45f);
-			smallFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(20f);
-			titleFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(85f);
-			btnFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(25f);
+			font = Font.createFont(Font.TRUETYPE_FONT, MainCanvas.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(45f);
+			smallFont = Font.createFont(Font.TRUETYPE_FONT, MainCanvas.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(20f);
+			titleFont = Font.createFont(Font.TRUETYPE_FONT, MainCanvas.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(85f);
+			btnFont = Font.createFont(Font.TRUETYPE_FONT, MainCanvas.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(25f);
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
@@ -215,47 +215,47 @@ public class ac extends JPanel implements Runnable {
 
 		objectsDefined = true;
 		repaint();
-		if (ad.aniFrame == 0)
-			ad.aniFrame = 1;
+		if (Character.aniFrame == 0)
+			Character.aniFrame = 1;
 		else
-			ad.aniFrame = 0;
+			Character.aniFrame = 0;
 	}
 	
 	public static void resetLevel(){
-		ad.character = ad.defineChar();
-		bb.defineFloors(level);
-		ba.defineEnemies();
-		ad.xs = 0;
-		ad.ys = 0;
-		ad.starX.clear();
-		ad.starY.clear();
-		for (int i = 0; i < ad.starNumber; i++){
-			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
-			int y = 0 + (int)(Math.random() * ((aa.height - 0) + 1));
-			ad.starX.add(x);
-			ad.starY.add(y);
+		Character.character = Character.defineChar();
+		Platforms.defineFloors(level);
+		Enemies.defineEnemies();
+		Character.xs = 0;
+		Character.ys = 0;
+		Character.starX.clear();
+		Character.starY.clear();
+		for (int i = 0; i < Character.starNumber; i++){
+			int x = 0 + (int)(Math.random() * ((Main.width - 0) + 1));
+			int y = 0 + (int)(Math.random() * ((Main.height - 0) + 1));
+			Character.starX.add(x);
+			Character.starY.add(y);
 		}
-		ad.centerX = aa.width / 2 + ad.xs;
-		ad.centerY = aa.width / 2 + ad.ys;
+		Character.centerX = Main.width / 2 + Character.xs;
+		Character.centerY = Main.width / 2 + Character.ys;
 	}
 
 	public static void colorFloors(Graphics g, Rectangle f){
 		g.setColor(new Color(0x6600000));
 		try {
-			g.fillRect(f.x - ad.xs, f.y - ad.ys, f.width, f.height);
+			g.fillRect(f.x - Character.xs, f.y - Character.ys, f.width, f.height);
 		}
 		catch (Exception e){}
 	}
 
 	public static void colorChar(Graphics g, Rectangle f){
 		g.setColor(Color.BLACK);
-		g.fillRect(f.x - ad.xs, f.y - ad.ys, f.width, f.height);
+		g.fillRect(f.x - Character.xs, f.y - Character.ys, f.width, f.height);
 	}
 
 	public int centerText(Graphics g, String text){
 		int stringLen = (int)
 				g.getFontMetrics().getStringBounds(text, g).getWidth();
-		return aa.width / 2 - stringLen / 2;
+		return Main.width / 2 - stringLen / 2;
 	}
 
 	public void drawText(Graphics g){
@@ -264,24 +264,24 @@ public class ac extends JPanel implements Runnable {
 
 		// draw lives
 		g.setColor(Color.WHITE);
-		g.drawImage(ad.boyStandFront, aa.width - 100, aa.height - 90, this);
-		g.drawString("x", aa.width - 65, aa.height - 50);
-		g.drawString(Integer.toString(ad.lives), aa.width - 40, aa.height - 50);
+		g.drawImage(Character.boyStandFront, Main.width - 100, Main.height - 90, this);
+		g.drawString("x", Main.width - 65, Main.height - 50);
+		g.drawString(Integer.toString(Character.lives), Main.width - 40, Main.height - 50);
 
 		// draw pause message
 		/*if (!inGame && paused){
 			g.setColor(Color.WHITE);
-			g.drawString("Paused", centerText(g, "Paused"), aa.height / 2);
+			g.drawString("Paused", centerText(g, "Paused"), Main.height / 2);
 		}*/
 
 		// draw death messages
-		if (ad.dead){
+		if (Character.dead){
 			g.setColor(Color.RED);
-			if (ad.lives > 0){
-				g.drawString("FATALITY", centerText(g, "FATALITY"), aa.height / 2);
+			if (Character.lives > 0){
+				g.drawString("FATALITY", centerText(g, "FATALITY"), Main.height / 2);
 			}
 			else {
-				g.drawString("GAME OVER", centerText(g, "GAME OVER"), aa.height / 2);
+				g.drawString("GAME OVER", centerText(g, "GAME OVER"), Main.height / 2);
 			}
 		}
 
@@ -289,7 +289,7 @@ public class ac extends JPanel implements Runnable {
 		if (konami){
 			g.setColor(Color.BLUE);
 			String kText = "KOOOOOOOONAAAAAAAMIIIIIIIIIIIII!!!!!!!!!!";
-			g.drawString(kText, centerText(g, kText), aa.height / 2);
+			g.drawString(kText, centerText(g, kText), Main.height / 2);
 		}
 	}
 
@@ -299,41 +299,41 @@ public class ac extends JPanel implements Runnable {
 		if (objectsDefined && !menu){
 
 			// draw background
-			for (int i = 0; i < ad.starX.size(); i++){
-				int x = ad.starX.get(i);
-				int y = ad.starY.get(i);
-				int backgroundArea = ad.character.x / (aa.width * ad.starSpeed);
+			for (int i = 0; i < Character.starX.size(); i++){
+				int x = Character.starX.get(i);
+				int y = Character.starY.get(i);
+				int backgroundArea = Character.character.x / (Main.width * Character.starSpeed);
 				g.setColor(new Color(0x666666));
-				g.drawRect((x + (backgroundArea * aa.width)) + ad.backgroundLoc, y, 1, 1);
-				g.drawRect((x + ((backgroundArea - 1) * aa.width)) + ad.backgroundLoc, y, 1, 1);
-				g.drawRect((x + ((backgroundArea + 1) * aa.width)) + ad.backgroundLoc, y, 1, 1);
+				g.drawRect((x + (backgroundArea * Main.width)) + Character.backgroundLoc, y, 1, 1);
+				g.drawRect((x + ((backgroundArea - 1) * Main.width)) + Character.backgroundLoc, y, 1, 1);
+				g.drawRect((x + ((backgroundArea + 1) * Main.width)) + Character.backgroundLoc, y, 1, 1);
 			}
 
 			// character
-			g.drawImage(ad.charSprite, ad.character.x - ad.xs, ad.character.y - ad.ys, this);
+			g.drawImage(Character.charSprite, Character.character.x - Character.xs, Character.character.y - Character.ys, this);
 
 			// enemies
 			g.setColor(Color.WHITE);
-			for (Enemy e : ba.enemies){
+			for (Enemy e : Enemies.enemies){
 				Image sprite = null;
 				if (e.getDirection() == 0)
 					sprite = e.getSpritesF().get(e.getAnimationStage());
 				else
 					sprite = e.getSprites().get(e.getAnimationStage());
-				g.drawImage(sprite, e.getX() - ad.xs, e.getY() - ad.ys, this);
+				g.drawImage(sprite, e.getX() - Character.xs, e.getY() - Character.ys, this);
 			}
 
 			// floors
-			for (int i = 0; i < bb.floors.size(); i++){
-				if (bb.floorLevel.get(i) == level){
-					Rectangle r = bb.floors.get(i);
+			for (int i = 0; i < Platforms.floors.size(); i++){
+				if (Platforms.floorLevel.get(i) == level){
+					Rectangle r = Platforms.floors.get(i);
 					colorFloors(g, r);
 				}
 			}
 			
 			// level end
 			g.setColor(Color.BLUE);
-			g.fillRect(bb.levelEnd.get(level - 1).x - ad.xs, bb.levelEnd.get(level - 1).y - ad.ys, bb.levelEnd.get(level - 1).width, bb.levelEnd.get(level - 1).height);
+			g.fillRect(Platforms.levelEnd.get(level - 1).x - Character.xs, Platforms.levelEnd.get(level - 1).y - Character.ys, Platforms.levelEnd.get(level - 1).width, Platforms.levelEnd.get(level - 1).height);
 
 			// draw health bar
 			int space = 2;
@@ -342,11 +342,11 @@ public class ac extends JPanel implements Runnable {
 			int x = 5;
 			g.setFont(smallFont);
 			g.setColor(Color.WHITE);
-			g.drawString("Health", x, aa.height - 45);
-			for (int i = 0; i < ad.health; i++){
-				int y = aa.height - 70 - (i * height) - (space * i);
+			g.drawString("Health", x, Main.height - 45);
+			for (int i = 0; i < Character.health; i++){
+				int y = Main.height - 70 - (i * height) - (space * i);
 				Color color = Color.GREEN;
-				if (ad.health <= 5)
+				if (Character.health <= 5)
 					color = Color.RED;
 				g.setColor(color);
 				g.fillRect(x, y, width, height);
@@ -363,9 +363,9 @@ public class ac extends JPanel implements Runnable {
 				int y = menuStarY.get(i);
 				g.setColor(new Color(0x666666));
 				g.drawRect(x + menuBgLoc, y, 1, 1);
-				g.drawRect(x + menuBgLoc + aa.width, y, 1, 1);
+				g.drawRect(x + menuBgLoc + Main.width, y, 1, 1);
 				if (menuBgFrame >= menuSpeed){
-					if (menuBgLoc > aa.width * -1)
+					if (menuBgLoc > Main.width * -1)
 						menuBgLoc -= 1;
 					else
 						menuBgLoc = 0;
@@ -376,23 +376,23 @@ public class ac extends JPanel implements Runnable {
 			}
 
 			// draw the floor
-			Rectangle menuFloor = new Rectangle(0, aa.height - 135, aa.width, bb.floorHeight);
+			Rectangle menuFloor = new Rectangle(0, Main.height - 135, Main.width, Platforms.floorHeight);
 			g.setColor(new Color(0x660000));
 			g.fillRect(menuFloor.x, menuFloor.y, menuFloor.width, menuFloor.height);
 
 			// draw the character
-			if (ad.aniTickFrame >= ad.aniTicks - 1){
-				if (ad.aniFrame < ad.walkRight.size() - 1){
-					ad.aniFrame += 1;
+			if (Character.aniTickFrame >= Character.aniTicks - 1){
+				if (Character.aniFrame < Character.walkRight.size() - 1){
+					Character.aniFrame += 1;
 				}
 				else {
-					ad.aniFrame = 0;
+					Character.aniFrame = 0;
 				}
-				ad.aniTickFrame = 0;
+				Character.aniTickFrame = 0;
 			}
 			else
-				ad.aniTickFrame += 1;
-			g.drawImage(ad.walkRight.get(ad.aniFrame), aa.width / 2 - ad.walkRight.get(ad.aniFrame).getWidth(this) / 2, menuFloor.y - ad.character.height + 2, this);
+				Character.aniTickFrame += 1;
+			g.drawImage(Character.walkRight.get(Character.aniFrame), Main.width / 2 - Character.walkRight.get(Character.aniFrame).getWidth(this) / 2, menuFloor.y - Character.character.height + 2, this);
 
 			// draw the title
 			g.setColor(new Color(0x660000));
@@ -422,11 +422,11 @@ public class ac extends JPanel implements Runnable {
 			createButton(g, pauseQuitBtn, defColor, hoverColor, "Wake Up", textColor);
 		}
 		
-		if (ad.endLevel){
-			ad.endLevel = false;
+		if (Character.endLevel){
+			Character.endLevel = false;
 			String text = "Level Complete!";
-			g.drawString(text, centerText(g, text), aa.height / 2);
-			paintImmediately(0, 0, aa.width, aa.height);
+			g.drawString(text, centerText(g, text), Main.height / 2);
+			paintImmediately(0, 0, Main.width, Main.height);
 			try {
 				Thread.sleep(2000);
 			}
@@ -435,13 +435,13 @@ public class ac extends JPanel implements Runnable {
 			}
 			//level += 1;
 			resetLevel();
-			ad.dead = false;
+			Character.dead = false;
 		}
 		
 		if (win){
 			win = false;
 			String text = "You Win!";
-			g.drawString(text, centerText(g, text), aa.height / 2);
+			g.drawString(text, centerText(g, text), Main.height / 2);
 			try {
 				Thread.sleep(2000);
 			}
@@ -464,15 +464,15 @@ public class ac extends JPanel implements Runnable {
 				repaint();
 			}
 			if (inGame){
-				ad.run();
-				ba.run();
+				Character.run();
+				Enemies.run();
 				fpsSetter();
 				repaint();
 			}
 			/*if (hovering)
-				aa.f.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				Main.f.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			else
-				aa.f.setCursor(Cursor.getDefaultCursor());*/
+				Main.f.setCursor(Cursor.getDefaultCursor());*/
 		}
 	}
 	
@@ -481,7 +481,7 @@ public class ac extends JPanel implements Runnable {
 		int textOffset = 27;
 		Point mousePos = new Point(0, 0);
 		try {
-			mousePos = new Point(aa.f.getMousePosition().x, aa.f.getMousePosition().y - 24);
+			mousePos = new Point(Main.f.getMousePosition().x, Main.f.getMousePosition().y - 24);
 		}
 		catch (NullPointerException ex){}
 		g.setColor(def);
