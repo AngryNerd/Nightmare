@@ -335,6 +335,7 @@ public class ad {
 		for (Entity e : Entity.entities){
 			if (e.checkPlayerIntersect() && e.getType().equals("coin")){
 				ac.score += ac.coinValue;
+				ac.playCoinSound();
 				destroyEntities.add(e);
 			}
 		}

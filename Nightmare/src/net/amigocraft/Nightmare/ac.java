@@ -282,6 +282,19 @@ public class ac extends JPanel implements Runnable {
 		ad.centerX = aa.width / 2 + ad.xs;
 		ad.centerY = aa.width / 2 + ad.ys;
 	}
+	
+	public static void playCoinSound(){
+		try {
+			Clip clip = AudioSystem.getClip();
+			AudioInputStream aIs = AudioSystem.getAudioInputStream
+					(ac.class.getResourceAsStream("/sounds/coin.wav"));
+			clip.open(aIs);
+			clip.start();
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+		}
+	}
 
 	public static void colorFloors(Graphics g, Rectangle f){
 		g.setColor(new Color(0x6600000));
