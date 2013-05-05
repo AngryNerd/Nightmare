@@ -1,6 +1,8 @@
 /** GRAPHICS AND KEY LISTENER **/
 package net.amigocraft.Nightmare;
 
+import static net.amigocraft.Nightmare.Direction.*;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -23,15 +25,15 @@ public class ac extends JPanel implements Runnable {
 	public int fps = 1000;
 
 	public static int konamiStage = 0;
-
+	
 	public static boolean objectsDefined = false;
 	public static boolean running = true;
-	public static boolean inGame = false;
-	public static boolean menu = true;
-	public static boolean paused = false;
 	public static boolean konami = false;
 	public static boolean hovering = false;
 	public static boolean win = false;
+	public static boolean inGame = false;
+	public static boolean menu = true;
+	public static boolean paused = false;
 	public static boolean endLevelMenu = false;
 
 	public static List<Integer> menuStarX = new ArrayList<Integer>();
@@ -71,13 +73,13 @@ public class ac extends JPanel implements Runnable {
 		f.addKeyListener(new KeyAdapter(){
 			public void keyPressed(KeyEvent e){
 				if (e.getKeyCode() == ad.keyLeft || e.getKeyCode() == ad.keyLeft2){
-					ad.left = true;
-					ad.right = false;
+					ad.dir = LEFT;
+					ad.aniTickFrame = 0;
 				}
 
 				if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
-					ad.right = true;
-					ad.left = false;
+					ad.dir = RIGHT;
+					ad.aniTickFrame = 0;
 				}
 				if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
 					if (!ad.falling){
@@ -85,13 +87,13 @@ public class ac extends JPanel implements Runnable {
 					}
 				}
 				if (e.getKeyCode() == ad.keyPause && !endLevelMenu){
-					if (inGame && !paused){
+					if (inGame){
 						inGame = false;
 						paused = true;
 					}
 					else {
-						inGame = true;
 						paused = false;
+						inGame = true;
 					}
 				}
 
@@ -126,15 +128,15 @@ public class ac extends JPanel implements Runnable {
 
 			public void keyReleased(KeyEvent e){
 				if (e.getKeyCode() == ad.keyLeft || e.getKeyCode() == ad.keyLeft2){
-					ad.left = false;
-					if (!ad.right){
+					ad.dir = STILL;
+					if (ad.dir != RIGHT){
 						ad.lastDir = 0;
 					}
 				}
 
 				if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
-					ad.right = false;
-					if (!ad.left){
+					ad.dir = STILL;
+					if (ad.dir != LEFT){
 						ad.lastDir = 1;
 					}
 				}
@@ -147,14 +149,13 @@ public class ac extends JPanel implements Runnable {
 			public void mouseClicked(MouseEvent e){
 				if (e.getButton() == 1){
 					Point mousePos = new Point(aa.f.getMousePosition().x, aa.f.getMousePosition().y - 24);
-					if (menu || paused || endLevelMenu){
+					if (!inGame){
 						if (playBtn.contains(mousePos) && menu){
 							menu = false;
 							inGame = true;
 							level = 1;
 						}
 						else if (quitBtn.contains(mousePos) && menu){
-							inGame = false;
 							aa.pullThePlug();
 						}
 						else if (resBtn.contains(mousePos) && paused){
@@ -178,13 +179,16 @@ public class ac extends JPanel implements Runnable {
 							menu = true;
 						}
 						else if (nextBtn.contains(mousePos) && endLevelMenu){
+							ad.prevLives = ad.lives;
 							level += 1;
 							resetLevel();
 							endLevelMenu = false;
+							inGame = true;
 						}
 						else if (repBtn.contains(mousePos) && endLevelMenu){
 							resetLevel();
 							endLevelMenu = false;
+							inGame = true;
 						}
 						else if (endBtn.contains(mousePos) && endLevelMenu){
 							endLevelMenu = false;
@@ -243,6 +247,8 @@ public class ac extends JPanel implements Runnable {
 	}
 
 	public static void resetLevel(){
+		ad.health = ad.defaultHealth;
+		ad.lives = ad.prevLives;
 		ad.character = ad.defineChar();
 		bb.defineFloors(level);
 		ba.defineEnemies(level);
@@ -337,7 +343,7 @@ public class ac extends JPanel implements Runnable {
 			g.setColor(Color.WHITE);
 			for (Enemy e : ba.enemies){
 				Image sprite = null;
-				if (e.getDirection() == 0)
+				if (e.getDirection() == LEFT)
 					sprite = e.getSpritesF().get(e.getAnimationStage());
 				else
 					sprite = e.getSprites().get(e.getAnimationStage());
@@ -464,20 +470,6 @@ public class ac extends JPanel implements Runnable {
 			ad.endLevel = false;
 			inGame = false;
 			endLevelMenu = true;
-		}
-
-		if (win){
-			win = false;
-			String text = "You Win!";
-			g.drawString(text, centerText(g, text), aa.height / 2);
-			try {
-				Thread.sleep(2000);
-			}
-			catch (InterruptedException ex){
-				ex.printStackTrace();
-			}
-			inGame = false;
-			menu = true;
 		}
 	}
 

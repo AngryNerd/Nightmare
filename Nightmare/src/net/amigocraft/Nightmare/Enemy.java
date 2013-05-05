@@ -13,10 +13,10 @@ public class Enemy {
 	private List<Image> sprites;
 	private List<Image> spritesF;
 	private int[] position;
-	private int direction;
+	private Direction direction;
 	private int[] dim;
 	
-	public Enemy(String type, int level, List<Image> sprites, List<Image> spritesF, int[] position, int direction, int[] dim){
+	public Enemy(String type, int level, List<Image> sprites, List<Image> spritesF, int[] position, Direction direction, int[] dim){
 		this.type = type;
 		this.sprites = sprites;
 		this.spritesF = spritesF;
@@ -66,7 +66,7 @@ public class Enemy {
 		return this.position[1];
 	}
 	
-	public int getDirection(){
+	public Direction getDirection(){
 		return direction;
 	}
 	
@@ -142,7 +142,7 @@ public class Enemy {
 		this.position[1] = y;
 	}
 	
-	public void setDirection(int dir){
+	public void setDirection(Direction dir){
 		this.direction = dir;
 	}
 	

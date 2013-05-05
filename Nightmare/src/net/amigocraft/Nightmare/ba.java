@@ -1,6 +1,8 @@
 /** ENEMIES **/
 package net.amigocraft.Nightmare;
 
+import static net.amigocraft.Nightmare.Direction.*;
+
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -57,7 +59,7 @@ public class ba extends JPanel {
 	}
 	
 	public static void createEnemy(int x, int y, String type, int level){
-		enemies.add(new Enemy(type, level, enemySprites.get(type), enemySpritesF.get(type), new int[]{x - (enemyDim.get(type)[0] / 2), y - (enemyDim.get(type)[1])}, 0, enemyDim.get(type)));
+		enemies.add(new Enemy(type, level, enemySprites.get(type), enemySpritesF.get(type), new int[]{x - (enemyDim.get(type)[0] / 2), y - (enemyDim.get(type)[1])}, LEFT, enemyDim.get(type)));
 	}
 
 	public static void run(){
@@ -67,11 +69,11 @@ public class ba extends JPanel {
 			boolean left = false;
 			boolean right = false;
 			boolean falling = false;
-			if (e.getDirection() == 0)
+			if (e.getDirection() == LEFT)
 				left = true;
-			else if (e.getDirection() == 1)
+			else if (e.getDirection() == RIGHT)
 				right = true;
-			else if (e.getDirection() == 2)
+			else if (e.getDirection() == FALLING)
 				falling = true;
 			Point foot1 = new Point();
 			Point foot2 = new Point();
@@ -81,24 +83,24 @@ public class ba extends JPanel {
 			// Edge check
 			if (!containsFeet(foot1)){
 				if (left){
-					e.setDirection(1);
+					e.setDirection(RIGHT);
 					right = true;
 					left = false;
 				}
 				else {
-					e.setDirection(0);
+					e.setDirection(LEFT);
 					left = true;
 					right = false;
 				}	
 			}
 			else if (!containsFeet(foot2)){
 				if (!left){
-					e.setDirection(0);
+					e.setDirection(LEFT);
 					left = true;
 					right = false;
 				}
 				else {
-					e.setDirection(1);
+					e.setDirection(RIGHT);
 					right = true;
 					left = false;
 				}	
@@ -108,7 +110,7 @@ public class ba extends JPanel {
 				left = false;
 				right = false;
 				falling = true;
-				e.setDirection(2);
+				e.setDirection(FALLING);
 			}
 
 			if (falling){
@@ -132,7 +134,7 @@ public class ba extends JPanel {
 			// animation
 			if (e.getAnimationFrame() >= ba.aniSpeed){
 				List<Image> loop = null;
-				if (e.getDirection() == 0)
+				if (e.getDirection() == LEFT)
 					loop = e.getSprites();
 				else
 					loop = e.getSpritesF();
@@ -151,7 +153,10 @@ public class ba extends JPanel {
 			if (new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight()).intersects(ad.character)){
 				if (!ad.invincible){
 					ad.health -= 3;
-					ad.knockback = true;
+					if (e.getX() + e.getWidth() / 2 > ad.character.x + ad.characterWidth / 2)
+						ad.knockback = LEFT;
+					else
+						ad.knockback = RIGHT;
 					if (ad.health > 0)
 						ad.invincible = true;
 					else

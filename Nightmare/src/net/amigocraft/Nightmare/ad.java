@@ -1,6 +1,8 @@
 /** CHARACTER **/
 package net.amigocraft.Nightmare;
 
+import static net.amigocraft.Nightmare.Direction.*;
+
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -75,17 +77,18 @@ public class ad {
 	public static int starNumber = 100;
 
 	public static boolean falling = true;
-	public static boolean right = false;
-	public static boolean left = false;
+	public static Direction dir = STILL;
 	public static boolean jumping = false;
 	public static boolean dead = false;
 	public static boolean invincible = false;
-	public static boolean knockback = false;
+	public static Direction knockback = STILL;
 	public static boolean endLevel = false;
 	public static int health = defaultHealth;
 	public static int backgroundSpeed = ad.movementSpeed * starSpeed;
 
 	public static int lives = defaultLives;
+	
+	public static int prevLives = defaultLives;
 
 	public static Rectangle defineChar(){
 		try {
@@ -113,7 +116,7 @@ public class ad {
 		Point foot2 = new Point(character.x + character.width, character.y + character.height);
 
 		if (dead){
-			knockback = false;
+			knockback = STILL;
 			try {
 				Thread.sleep(respawnDelay);
 			}
@@ -140,7 +143,7 @@ public class ad {
 		}
 
 		if (jumping){
-			if (!falling && !knockback){
+			if (!falling && knockback == STILL){
 				if (jumpSpeedFrame >= jumpSpeed){
 					jumpSpeedFrame = 0;
 					if (jumpFrame <= jumpLength){
@@ -170,7 +173,7 @@ public class ad {
 			falling = true;
 
 		if (falling){
-			if (!knockback){
+			if (knockback == STILL){
 				if (fallFrame >= fallSpeed){
 					character.y += 1;
 					if (character.y <= 700){
@@ -188,7 +191,7 @@ public class ad {
 			}
 		}
 
-		if (left && !knockback){
+		if (dir == LEFT && knockback == STILL){
 			if (movementFrame >= movementSpeed){
 				character.x -= 1;
 				if (character.x <= centerX - scrollDelay){
@@ -222,7 +225,7 @@ public class ad {
 			else
 				aniTickFrame += 1;
 		}
-		else if (right && !knockback){
+		else if (dir == RIGHT && knockback == STILL){
 			if (movementFrame >= movementSpeed){
 				character.x += 1;
 				if (character.x >= centerX + scrollDelay){
@@ -271,10 +274,10 @@ public class ad {
 			invincibleTick += 1;
 
 		// handle knockback
-		if (knockback){
+		if (knockback != STILL){
 			if (knockbackFrame >= knockbackTime){
 				if (knockbackTick < knockbackDistance){
-					if (lastDir == 1){
+					if (knockback == LEFT){
 						character.x -= 1;
 						if (character.x <= centerX - scrollDelay){
 							xs -= 1;
@@ -313,7 +316,7 @@ public class ad {
 					knockbackTick += 1;
 				}
 				else {
-					knockback = false;
+					knockback = STILL;
 					knockbackTick = 0;
 				}
 				knockbackFrame = 0;
