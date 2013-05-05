@@ -33,7 +33,7 @@ public class ba extends JPanel {
 	public static boolean objectsDefined = false;
 
 	// Define enemies
-	public static void defineEnemies(){
+	public static void defineEnemies(int level){
 		enemyDim.clear();
 		enemyDim.put("skeleton", new int[]{26, 46});
 		try {
@@ -52,8 +52,8 @@ public class ba extends JPanel {
 			e.printStackTrace();
 		}
 		enemies.clear();
-		createEnemy(posRel(0, 1, 3), bb.floors.get(0).y, "skeleton", 1);
-		createEnemy(posRel(1, 1, 2), bb.floors.get(1).y, "skeleton", 1);
+		createEnemy(posRel(0, 1, 3), bb.floors.get(0).y, "skeleton", level);
+		createEnemy(posRel(1, 1, 2), bb.floors.get(1).y, "skeleton", level);
 	}
 	
 	public static void createEnemy(int x, int y, String type, int level){

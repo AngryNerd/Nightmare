@@ -32,6 +32,7 @@ public class ac extends JPanel implements Runnable {
 	public static boolean konami = false;
 	public static boolean hovering = false;
 	public static boolean win = false;
+	public static boolean endLevelMenu = false;
 
 	public static List<Integer> menuStarX = new ArrayList<Integer>();
 	public static List<Integer> menuStarY = new ArrayList<Integer>();
@@ -39,12 +40,18 @@ public class ac extends JPanel implements Runnable {
 	public static int menuBgLoc = 0;
 	public static int menuSpeed = 250;
 	public static int level = 1;
+	public static int totalLevels = 1;
 
 	// define main menu buttons
 	Rectangle playBtn = new Rectangle(aa.width / 2 - 80, 175, 160, 40);
 	Rectangle tutBtn = new Rectangle(aa.width / 2 - 80, 245, 160, 40);
 	Rectangle lbBtn = new Rectangle(aa.width / 2 - 80, 315, 160, 40);
 	Rectangle quitBtn = new Rectangle(aa.width / 2 - 80, aa.height - 90, 160, 40);
+
+	// define inter-level buttons
+	Rectangle nextBtn = playBtn;
+	Rectangle repBtn = tutBtn;
+	Rectangle endBtn = lbBtn;
 
 	// define pause menu buttons
 	Rectangle resBtn = new Rectangle(aa.width / 2 - 80, 150, 160, 40);
@@ -77,7 +84,7 @@ public class ac extends JPanel implements Runnable {
 						ad.jumping = true;
 					}
 				}
-				if (e.getKeyCode() == ad.keyPause){
+				if (e.getKeyCode() == ad.keyPause && !endLevelMenu){
 					if (inGame && !paused){
 						inGame = false;
 						paused = true;
@@ -140,7 +147,7 @@ public class ac extends JPanel implements Runnable {
 			public void mouseClicked(MouseEvent e){
 				if (e.getButton() == 1){
 					Point mousePos = new Point(aa.f.getMousePosition().x, aa.f.getMousePosition().y - 24);
-					if (menu || paused){
+					if (menu || paused || endLevelMenu){
 						if (playBtn.contains(mousePos) && menu){
 							menu = false;
 							inGame = true;
@@ -164,10 +171,24 @@ public class ac extends JPanel implements Runnable {
 							ad.backgroundLoc = 0;
 							ad.centerX = aa.width / 2 + ad.xs;
 							ad.centerY = aa.width / 2 + ad.ys;
-							ba.defineEnemies();
+							ba.defineEnemies(level);
 						}
 						else if (pauseQuitBtn.contains(mousePos) && paused){
 							paused = false;
+							menu = true;
+						}
+						else if (nextBtn.contains(mousePos) && endLevelMenu){
+							level += 1;
+							resetLevel();
+							endLevelMenu = false;
+						}
+						else if (repBtn.contains(mousePos) && endLevelMenu){
+							resetLevel();
+							endLevelMenu = false;
+						}
+						else if (endBtn.contains(mousePos) && endLevelMenu){
+							endLevelMenu = false;
+							inGame = false;
 							menu = true;
 						}
 					}
@@ -187,7 +208,7 @@ public class ac extends JPanel implements Runnable {
 	public void defineObjects(){
 		ad.character = ad.defineChar();
 		bb.defineFloors(level);
-		ba.defineEnemies();
+		ba.defineEnemies(level);
 		// define star locations
 		for (int i = 0; i < ad.starNumber; i++){
 			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
@@ -220,11 +241,11 @@ public class ac extends JPanel implements Runnable {
 		else
 			ad.aniFrame = 0;
 	}
-	
+
 	public static void resetLevel(){
 		ad.character = ad.defineChar();
 		bb.defineFloors(level);
-		ba.defineEnemies();
+		ba.defineEnemies(level);
 		ad.xs = 0;
 		ad.ys = 0;
 		ad.starX.clear();
@@ -296,7 +317,7 @@ public class ac extends JPanel implements Runnable {
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 
-		if (objectsDefined && !menu){
+		if (objectsDefined && !menu && !endLevelMenu){
 
 			// draw background
 			for (int i = 0; i < ad.starX.size(); i++){
@@ -330,10 +351,10 @@ public class ac extends JPanel implements Runnable {
 					colorFloors(g, r);
 				}
 			}
-			
+
 			// level end
 			g.setColor(Color.BLUE);
-			g.fillRect(bb.levelEnd.get(level - 1).x - ad.xs, bb.levelEnd.get(level - 1).y - ad.ys, bb.levelEnd.get(level - 1).width, bb.levelEnd.get(level - 1).height);
+			g.fillRect(bb.levelEnd.x - ad.xs, bb.levelEnd.y - ad.ys, bb.levelEnd.width, bb.levelEnd.height);
 
 			// draw health bar
 			int space = 2;
@@ -409,6 +430,23 @@ public class ac extends JPanel implements Runnable {
 			createButton(g, lbBtn, defColor, hoverColor, "Leaderboard", textColor, true);
 			createButton(g, quitBtn, defColor, hoverColor, "Exit Game", textColor);
 		}
+		else if (endLevelMenu){
+
+			Color hoverColor = Color.YELLOW;
+			Color defColor = new Color(0xBBBBBB);
+			Color textColor = new Color(0x660000);
+
+			g.setColor(textColor);
+			g.setFont(font);
+			if (level < totalLevels){
+				g.drawString("Level Complete!", centerText(g, "Level Complete!"), 150);
+				createButton(g, nextBtn, defColor, hoverColor, "Next Level", textColor);
+			}
+			else
+				g.drawString("You Win!", centerText(g, "You Win!"), 150);
+			createButton(g, repBtn, defColor, hoverColor, "Replay Level", textColor);
+			createButton(g, endBtn, defColor, hoverColor, "End Game", textColor);
+		}
 
 		// draw the pause menu
 		if (paused){
@@ -421,23 +459,13 @@ public class ac extends JPanel implements Runnable {
 			createButton(g, restartBtn, defColor, hoverColor, "Restart Level", textColor);
 			createButton(g, pauseQuitBtn, defColor, hoverColor, "Wake Up", textColor);
 		}
-		
+
 		if (ad.endLevel){
 			ad.endLevel = false;
-			String text = "Level Complete!";
-			g.drawString(text, centerText(g, text), aa.height / 2);
-			paintImmediately(0, 0, aa.width, aa.height);
-			try {
-				Thread.sleep(2000);
-			}
-			catch (InterruptedException e){
-				e.printStackTrace();
-			}
-			//level += 1;
-			resetLevel();
-			ad.dead = false;
+			inGame = false;
+			endLevelMenu = true;
 		}
-		
+
 		if (win){
 			win = false;
 			String text = "You Win!";
@@ -454,18 +482,22 @@ public class ac extends JPanel implements Runnable {
 	}
 
 	public void run(){
-		while(running){
-			if (menu){
-				fpsSetter();
-				repaint();
-			}
-			if (paused){
-				fpsSetter();
-				repaint();
-			}
+		while (running){
 			if (inGame){
 				ad.run();
 				ba.run();
+				fpsSetter();
+				repaint();
+			}
+			else if (menu){
+				fpsSetter();
+				repaint();
+			}
+			else if (paused){
+				fpsSetter();
+				repaint();
+			}
+			else if (endLevelMenu){
 				fpsSetter();
 				repaint();
 			}
@@ -475,7 +507,7 @@ public class ac extends JPanel implements Runnable {
 				aa.f.setCursor(Cursor.getDefaultCursor());*/
 		}
 	}
-	
+
 	public void createButton(Graphics g, Rectangle btn, Color def, Color hover, String text, Color tColor, boolean greyed){
 		if (greyed) def = new Color(0x333333);
 		int textOffset = 27;
@@ -495,7 +527,7 @@ public class ac extends JPanel implements Runnable {
 		g.setFont(btnFont);
 		g.drawString(text, centerText(g, text), btn.y + textOffset);
 	}
-	
+
 	public void createButton(Graphics g, Rectangle btn, Color def, Color hover, String text, Color tColor){
 		createButton(g, btn, def, hover, text, tColor, false);
 	}

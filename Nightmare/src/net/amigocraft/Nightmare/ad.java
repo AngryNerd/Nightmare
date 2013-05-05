@@ -127,7 +127,7 @@ public class ad {
 			backgroundLoc = 0;
 			centerX = aa.width / 2 + xs;
 			centerY = aa.width / 2 + ys;
-			ba.defineEnemies();
+			ba.defineEnemies(ac.level);
 			if (lives > 0)
 				lives -= 1;
 			else {
@@ -323,15 +323,8 @@ public class ad {
 		}
 
 		// check if character is at level end
-		if (bb.levelEnd.size() > ac.level && !endLevel && !ac.win){
-			if (bb.levelEnd.get(ac.level - 1).contains(new Point(character.x + character.width, character.y + character.height))){
+			if (bb.levelEnd.contains(new Point(character.x + character.width, character.y + character.height))){
 				endLevel = true;
 			}
-		}
-		else if (bb.levelEnd.size() == ac.level && !endLevel && !ac.win){
-			if (bb.levelEnd.get(ac.level - 1).contains(new Point(character.x + character.width, character.y + character.height))){
-				endLevel = true;
-			}
-		}
 	}
 }

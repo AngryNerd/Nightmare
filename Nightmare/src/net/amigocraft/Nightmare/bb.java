@@ -19,7 +19,7 @@ public class bb extends JPanel {
 
 	public static List<Rectangle> floors = new ArrayList<Rectangle>();
 	public static List<Integer> floorLevel = new ArrayList<Integer>();
-	public static List<Rectangle> levelEnd = new ArrayList<Rectangle>();
+	public static Rectangle levelEnd = new Rectangle();
 
 	// Define floors
 	public static void defineFloors(int level){
@@ -30,7 +30,7 @@ public class bb extends JPanel {
 			createFloor(2300, 650, 1000, level);
 			createFloor(3400, 500, 600, level);
 			createFloor(4050, 600, 900, level);
-			levelEnd.add(new Rectangle(4950, 600 - 150 + floorHeight, 50, 150));
+			levelEnd = new Rectangle(4950, 600 - 250 + floorHeight, 50, 250);
 		}
 	}
 
