@@ -16,6 +16,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JPanel;
 
 public class ac extends JPanel implements Runnable {
@@ -25,7 +28,7 @@ public class ac extends JPanel implements Runnable {
 	public int fps = 1000;
 
 	public static int konamiStage = 0;
-	
+
 	public static boolean objectsDefined = false;
 	public static boolean running = true;
 	public static boolean konami = false;
@@ -43,6 +46,9 @@ public class ac extends JPanel implements Runnable {
 	public static int menuSpeed = 250;
 	public static int level = 1;
 	public static int totalLevels = 1;
+
+	public static int score = 0;
+	public static int coinValue = 1;
 
 	// define main menu buttons
 	Rectangle playBtn = new Rectangle(aa.width / 2 - 80, 175, 160, 40);
@@ -199,8 +205,22 @@ public class ac extends JPanel implements Runnable {
 		Color bgcolor = new Color(0x000000);
 		setBackground(bgcolor);
 		defineObjects();
+		playMusic();
 		game = new Thread(this);
 		game.start();
+	}
+
+	public void playMusic(){
+		try {
+			Clip clip = AudioSystem.getClip();
+			AudioInputStream aIs = AudioSystem.getAudioInputStream
+					(ac.class.getResourceAsStream("/sounds/music.wav"));
+			clip.open(aIs);
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+		}
 	}
 
 	// Define objects
@@ -208,6 +228,9 @@ public class ac extends JPanel implements Runnable {
 		ad.character = ad.defineChar();
 		bb.defineFloors(level);
 		ba.defineEnemies(level);
+		Entity.initialize();
+		Entity.setupEntities();
+
 		// define star locations
 		for (int i = 0; i < ad.starNumber; i++){
 			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
@@ -352,6 +375,22 @@ public class ac extends JPanel implements Runnable {
 				}
 			}
 
+			// coins
+			for (Entity e : Entity.entities){
+				if (e.getType().equals("coin")){
+					g.drawImage(Entity.coinSprites.get(Entity.aniFrame), e.getX() - ad.xs, e.getY() - ad.ys, this);
+				}
+				if (Entity.aniTick < Entity.aniDelay)
+					Entity.aniTick += 1;
+				else {
+					Entity.aniTick = 0;
+					if (Entity.aniFrame < Entity.coinSprites.size() - 1)
+						Entity.aniFrame += 1;
+					else
+						Entity.aniFrame = 0;
+				}
+			}
+
 			// level end
 			g.setColor(Color.BLUE);
 			g.fillRect(bb.levelEnd.x - ad.xs, bb.levelEnd.y - ad.ys, bb.levelEnd.width, bb.levelEnd.height);
@@ -372,6 +411,12 @@ public class ac extends JPanel implements Runnable {
 				g.setColor(color);
 				g.fillRect(x, y, width, height);
 			}
+
+			// score
+			g.drawImage(Entity.coinSprites.get(0), aa.width - 75, 5, null);
+			g.setColor(Color.WHITE);
+			g.setFont(btnFont);
+			g.drawString(Integer.toString(score), aa.width - 35, 27);
 
 			drawText(g);
 		}

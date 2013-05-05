@@ -87,7 +87,7 @@ public class ad {
 	public static int backgroundSpeed = ad.movementSpeed * starSpeed;
 
 	public static int lives = defaultLives;
-	
+
 	public static int prevLives = defaultLives;
 
 	public static Rectangle defineChar(){
@@ -326,8 +326,20 @@ public class ad {
 		}
 
 		// check if character is at level end
-			if (bb.levelEnd.contains(new Point(character.x + character.width, character.y + character.height))){
-				endLevel = true;
+		if (bb.levelEnd.contains(new Point(character.x + character.width, character.y + character.height))){
+			endLevel = true;
+		}
+		
+		// check if character intersects coins
+		List<Entity> destroyEntities = new ArrayList<Entity>();
+		for (Entity e : Entity.entities){
+			if (e.checkPlayerIntersect() && e.getType().equals("coin")){
+				ac.score += ac.coinValue;
+				destroyEntities.add(e);
 			}
+		}
+		for (Entity e : destroyEntities){
+			e.destroy();
+		}
 	}
 }
