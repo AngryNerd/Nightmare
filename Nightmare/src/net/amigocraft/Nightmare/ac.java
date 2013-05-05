@@ -163,16 +163,10 @@ public class ac extends JPanel implements Runnable {
 							inGame = true;
 						}
 						else if (restartBtn.contains(mousePos) && paused){
+							ad.lives = ad.prevLives;
 							paused = false;
 							inGame = true;
-							ad.character.x = aa.width / 2;
-							ad.character.y = aa.height / 2;
-							ad.xs = 0;
-							ad.ys = 0;
-							ad.backgroundLoc = 0;
-							ad.centerX = aa.width / 2 + ad.xs;
-							ad.centerY = aa.width / 2 + ad.ys;
-							ba.defineEnemies(level);
+							resetLevel();
 						}
 						else if (pauseQuitBtn.contains(mousePos) && paused){
 							paused = false;
@@ -186,6 +180,7 @@ public class ac extends JPanel implements Runnable {
 							inGame = true;
 						}
 						else if (repBtn.contains(mousePos) && endLevelMenu){
+							ad.lives = ad.prevLives;
 							resetLevel();
 							endLevelMenu = false;
 							inGame = true;
@@ -248,7 +243,6 @@ public class ac extends JPanel implements Runnable {
 
 	public static void resetLevel(){
 		ad.health = ad.defaultHealth;
-		ad.lives = ad.prevLives;
 		ad.character = ad.defineChar();
 		bb.defineFloors(level);
 		ba.defineEnemies(level);
