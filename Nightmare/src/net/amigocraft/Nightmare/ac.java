@@ -52,13 +52,13 @@ public class ac extends JPanel implements Runnable {
 
 	// define main menu buttons
 	Rectangle playBtn = new Rectangle(aa.width / 2 - 80, 175, 160, 40);
-	Rectangle tutBtn = new Rectangle(aa.width / 2 - 80, 245, 160, 40);
+	Rectangle lcBtn = new Rectangle(aa.width / 2 - 80, 245, 160, 40);
 	Rectangle lbBtn = new Rectangle(aa.width / 2 - 80, 315, 160, 40);
 	Rectangle quitBtn = new Rectangle(aa.width / 2 - 80, aa.height - 90, 160, 40);
 
 	// define inter-level buttons
 	Rectangle nextBtn = playBtn;
-	Rectangle repBtn = tutBtn;
+	Rectangle repBtn = lcBtn;
 	Rectangle endBtn = lbBtn;
 
 	// define pause menu buttons
@@ -484,7 +484,7 @@ public class ac extends JPanel implements Runnable {
 			Color textColor = new Color(0x660000);
 
 			createButton(g, playBtn, defColor, hoverColor, "Go to Sleep", textColor);
-			createButton(g, tutBtn, defColor, hoverColor, "Tutorial", textColor, true);
+			createButton(g, lcBtn, defColor, hoverColor, "Level Creator", textColor, true);
 			createButton(g, lbBtn, defColor, hoverColor, "Leaderboard", textColor, true);
 			createButton(g, quitBtn, defColor, hoverColor, "Exit Game", textColor);
 		}
