@@ -136,7 +136,6 @@ public class ad {
 					ac.state = State.MENU;
 				}
 			}
-			health = defaultHealth;
 			dead = false;
 		}
 

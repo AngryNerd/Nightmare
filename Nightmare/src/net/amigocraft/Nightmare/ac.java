@@ -14,6 +14,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.RasterOp;
+import java.awt.image.RescaleOp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,13 +94,15 @@ public class ac extends JPanel implements Runnable {
 		f.addKeyListener(new KeyAdapter(){
 			public void keyPressed(KeyEvent e){
 				if (e.getKeyCode() == ad.keyLeft || e.getKeyCode() == ad.keyLeft2){
+					if (ad.dir != LEFT)
+						ad.aniTickFrame = ad.aniTicks;
 					ad.dir = LEFT;
-					ad.aniTickFrame = 0;
 				}
 
 				else if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
+					if (ad.dir != RIGHT)
+						ad.aniTickFrame = ad.aniTicks;
 					ad.dir = RIGHT;
-					ad.aniTickFrame = 0;
 				}
 				else if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
 					if (!fly){
@@ -192,6 +198,7 @@ public class ac extends JPanel implements Runnable {
 							if (playBtn.contains(mousePos)){
 								state = GAME;
 								level = 1;
+								ad.invincible = true;
 							}
 							else if (quitBtn.contains(mousePos)){
 								aa.pullThePlug();
@@ -330,6 +337,8 @@ public class ac extends JPanel implements Runnable {
 
 	public static void resetLevel(){
 		ad.health = ad.defaultHealth;
+		ad.invincibleTick = 0;
+		ad.invincible = true;
 		ad.character = ad.defineChar();
 		bb.defineFloors(level);
 		ba.defineEnemies(level);
@@ -451,7 +460,15 @@ public class ac extends JPanel implements Runnable {
 			}
 
 			// character
-			g.drawImage(ad.charSprite, ad.character.x - ad.xs, ad.character.y - ad.ys, this);
+			BufferedImage bi = new BufferedImage(ad.characterWidth, ad.characterHeight, BufferedImage.TYPE_INT_ARGB);
+			bi.getGraphics().drawImage(ad.charSprite, 0, 0 , null);
+			if (ad.invincible && !inv){
+				RasterOp rOp = new RescaleOp(new float[] {1.0f, 1.0f, 1.0f, 0.4f},
+						new float[] {0.0f, 0.0f, 0.0f, 0.0f}, null);
+			    Raster r = rOp.filter(bi.getData(), null);
+			    bi.setData(r);
+			}
+			g.drawImage(bi, ad.character.x - ad.xs, ad.character.y - ad.ys, this);
 
 			// enemies
 			g.setColor(Color.WHITE);
