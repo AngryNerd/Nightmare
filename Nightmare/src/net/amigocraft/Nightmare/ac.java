@@ -2,6 +2,7 @@
 package net.amigocraft.Nightmare;
 
 import static net.amigocraft.Nightmare.Direction.*;
+import static net.amigocraft.Nightmare.State.*;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -27,17 +28,13 @@ public class ac extends JPanel implements Runnable {
 
 	public int fps = 1000;
 
+	public static State state = MENU;
+
 	public static int konamiStage = 0;
 
 	public static boolean objectsDefined = false;
 	public static boolean running = true;
-	public static boolean konami = false;
 	public static boolean hovering = false;
-	public static boolean win = false;
-	public static boolean inGame = false;
-	public static boolean menu = true;
-	public static boolean paused = false;
-	public static boolean endLevelMenu = false;
 
 	public static List<Integer> menuStarX = new ArrayList<Integer>();
 	public static List<Integer> menuStarY = new ArrayList<Integer>();
@@ -48,7 +45,7 @@ public class ac extends JPanel implements Runnable {
 	public static int totalLevels = 1;
 
 	public static int score = 0;
-	public static int coinValue = 1;
+	public static int coinValue = 10;
 
 	// define main menu buttons
 	Rectangle playBtn = new Rectangle(aa.width / 2 - 80, 175, 160, 40);
@@ -65,6 +62,20 @@ public class ac extends JPanel implements Runnable {
 	Rectangle resBtn = new Rectangle(aa.width / 2 - 80, 150, 160, 40);
 	Rectangle restartBtn = new Rectangle(aa.width / 2 - 80, 220, 160, 40);
 	Rectangle pauseQuitBtn = new Rectangle(aa.width / 2 - 80, 290, 160, 40);
+
+	// define konami code checkboxes
+	int boxDim = 30;
+	int sideOffset = 200;
+	Rectangle moonJumpBox = new Rectangle(sideOffset, 150, boxDim, boxDim);
+	public static boolean moonJump = false;
+	Rectangle flyBox = new Rectangle(aa.width - sideOffset - boxDim, 150, boxDim, boxDim);
+	public static boolean fly = false;
+	Rectangle infLivesBox = new Rectangle(sideOffset, 250, boxDim, boxDim);
+	public static boolean infLives = false;
+	Rectangle superCoinsBox = new Rectangle(aa.width - sideOffset - boxDim, 250, boxDim, boxDim);
+	public static boolean superCoins = false;
+	Rectangle invBox = new Rectangle(sideOffset, 350, boxDim, boxDim);
+	public static boolean inv = false;
 
 	Font font = new Font("Verdana", Font.BOLD, 30);
 	Font smallFont = new Font("Verdana", Font.BOLD, 10);
@@ -83,23 +94,36 @@ public class ac extends JPanel implements Runnable {
 					ad.aniTickFrame = 0;
 				}
 
-				if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
+				else if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
 					ad.dir = RIGHT;
 					ad.aniTickFrame = 0;
 				}
-				if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
-					if (!ad.falling){
-						ad.jumping = true;
-					}
-				}
-				if (e.getKeyCode() == ad.keyPause && !endLevelMenu){
-					if (inGame){
-						inGame = false;
-						paused = true;
+				else if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
+					if (!fly){
+						if (!ad.falling && state == GAME){
+							ad.jumping = true;
+						}
 					}
 					else {
-						paused = false;
-						inGame = true;
+						ad.flyUp = true;
+						ad.flyDown = false;
+					}
+				}
+				else if (e.getKeyCode() == ad.keyFall || e.getKeyCode() == ad.keyFall2){
+					if (fly){
+						ad.flyDown = true;
+						ad.flyUp = false;
+					}
+				}
+				else if (e.getKeyCode() == ad.keyPause){
+					if (state == GAME){
+						state = PAUSED;
+					}
+					else if (state == PAUSED){
+						state = GAME;
+					}
+					else if (state == KONAMI){
+						state = GAME;
 					}
 				}
 
@@ -122,7 +146,7 @@ public class ac extends JPanel implements Runnable {
 					else if (konamiStage == 8 && e.getKeyCode() == KeyEvent.VK_B)
 						konamiStage += 1;
 					else if (konamiStage == 9 && e.getKeyCode() == KeyEvent.VK_A)
-						konami = true;
+						state = KONAMI;
 					else
 						konamiStage = 0;
 				}
@@ -146,6 +170,14 @@ public class ac extends JPanel implements Runnable {
 						ad.lastDir = 1;
 					}
 				}
+				
+				if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
+					ad.flyUp = false;
+				}
+				
+				if (e.getKeyCode() == ad.keyFall || e.getKeyCode() == ad.keyFall2){
+					ad.flyDown = false;
+				}
 
 			}
 		});
@@ -155,46 +187,78 @@ public class ac extends JPanel implements Runnable {
 			public void mouseClicked(MouseEvent e){
 				if (e.getButton() == 1){
 					Point mousePos = new Point(aa.f.getMousePosition().x, aa.f.getMousePosition().y - 24);
-					if (!inGame){
-						if (playBtn.contains(mousePos) && menu){
-							menu = false;
-							inGame = true;
-							level = 1;
+					if (state != GAME){
+						if (state == MENU){
+							if (playBtn.contains(mousePos)){
+								state = GAME;
+								level = 1;
+							}
+							else if (quitBtn.contains(mousePos)){
+								aa.pullThePlug();
+							}
 						}
-						else if (quitBtn.contains(mousePos) && menu){
-							aa.pullThePlug();
+						else if (state == PAUSED){
+							if (resBtn.contains(mousePos)){
+								state = GAME;
+							}
+							else if (restartBtn.contains(mousePos)){
+								ad.lives = ad.prevLives;
+								state = GAME;
+								resetLevel();
+							}
+							else if (pauseQuitBtn.contains(mousePos)){
+								state = MENU;
+							}
 						}
-						else if (resBtn.contains(mousePos) && paused){
-							paused = false;
-							inGame = true;
+						else if (state == LEVEL_MENU){
+							if (nextBtn.contains(mousePos)){
+								ad.prevLives = ad.lives;
+								level += 1;
+								resetLevel();
+								state = GAME;
+							}
+							else if (repBtn.contains(mousePos)){
+								ad.lives = ad.prevLives;
+								resetLevel();
+								state = GAME;
+							}
+							else if (endBtn.contains(mousePos)){
+								state = MENU;
+							}
 						}
-						else if (restartBtn.contains(mousePos) && paused){
-							ad.lives = ad.prevLives;
-							paused = false;
-							inGame = true;
-							resetLevel();
-						}
-						else if (pauseQuitBtn.contains(mousePos) && paused){
-							paused = false;
-							menu = true;
-						}
-						else if (nextBtn.contains(mousePos) && endLevelMenu){
-							ad.prevLives = ad.lives;
-							level += 1;
-							resetLevel();
-							endLevelMenu = false;
-							inGame = true;
-						}
-						else if (repBtn.contains(mousePos) && endLevelMenu){
-							ad.lives = ad.prevLives;
-							resetLevel();
-							endLevelMenu = false;
-							inGame = true;
-						}
-						else if (endBtn.contains(mousePos) && endLevelMenu){
-							endLevelMenu = false;
-							inGame = false;
-							menu = true;
+						else if (state == KONAMI){
+							if (moonJumpBox.contains(mousePos)){
+								if (moonJump)
+									moonJump = false;
+								else
+									moonJump = true;
+							}
+							else if (flyBox.contains(mousePos)){
+								if (fly)
+									fly = false;
+								else
+									fly = true;
+							}
+							else if (infLivesBox.contains(mousePos)){
+								if (infLives)
+									infLives = false;
+								else
+									infLives = true;
+							}
+							else if (superCoinsBox.contains(mousePos)){
+								if (superCoins)
+									superCoins = false;
+								else
+									superCoins = true;
+							}
+							else if (invBox.contains(mousePos)){
+								if (inv){
+									inv = false;
+									ad.invincible = false;
+								}
+								else
+									inv = true;
+							}
 						}
 					}
 				}
@@ -282,12 +346,12 @@ public class ac extends JPanel implements Runnable {
 		ad.centerX = aa.width / 2 + ad.xs;
 		ad.centerY = aa.width / 2 + ad.ys;
 	}
-	
-	public static void playCoinSound(){
+
+	public static void playSound(String path){
 		try {
 			Clip clip = AudioSystem.getClip();
 			AudioInputStream aIs = AudioSystem.getAudioInputStream
-					(ac.class.getResourceAsStream("/sounds/coin.wav"));
+					(ac.class.getResourceAsStream(path));
 			clip.open(aIs);
 			clip.start();
 		}
@@ -343,17 +407,37 @@ public class ac extends JPanel implements Runnable {
 		}
 
 		// KOOOOOOOONAAAAAAAMIIIIIIIIIIIII!!!!!!!!!!
-		if (konami){
-			g.setColor(Color.BLUE);
-			String kText = "KOOOOOOOONAAAAAAAMIIIIIIIIIIIII!!!!!!!!!!";
-			g.drawString(kText, centerText(g, kText), aa.height / 2);
+		if (state == KONAMI){
+			g.setColor(new Color(0x660000));
+			g.drawString("Cheat Menu", centerText(g, "Cheat Menu"), 75);
+			drawCheckBox(g, moonJumpBox, moonJump, "Moon Jump");
+			drawCheckBox(g, flyBox, fly, "Fly");
+			drawCheckBox(g, infLivesBox, infLives, "Infinite Lives");
+			drawCheckBox(g, superCoinsBox, superCoins, "Super Coins");
+			drawCheckBox(g, invBox, inv, "Invincibility");
 		}
+	}
+
+	public void drawCheckBox(Graphics g, Rectangle box, boolean checked, String name){
+		g.setColor(Color.GRAY);
+		g.fillRect(box.x, box.y, box.width, box.height);
+		if (checked)
+			g.setColor(Color.RED);
+		else
+			g.setColor(Color.WHITE);
+		g.fillRect(box.x + 3, box.y + 3, box.width - 6, box.height - 6);
+		g.setColor(new Color(0x660000));
+		g.setFont(btnFont);
+		g.drawString(name, box.x + box.width + 10, box.y + box.height - 8);
 	}
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		
+		if (inv)
+			ad.invincible = true;
 
-		if (objectsDefined && !menu && !endLevelMenu){
+		if (objectsDefined && state == GAME || state == PAUSED || state == KONAMI){
 
 			// draw background
 			for (int i = 0; i < ad.starX.size(); i++){
@@ -393,14 +477,16 @@ public class ac extends JPanel implements Runnable {
 				if (e.getType().equals("coin")){
 					g.drawImage(Entity.coinSprites.get(Entity.aniFrame), e.getX() - ad.xs, e.getY() - ad.ys, this);
 				}
-				if (Entity.aniTick < Entity.aniDelay)
-					Entity.aniTick += 1;
-				else {
-					Entity.aniTick = 0;
-					if (Entity.aniFrame < Entity.coinSprites.size() - 1)
-						Entity.aniFrame += 1;
-					else
-						Entity.aniFrame = 0;
+				if (state == GAME){
+					if (Entity.aniTick < Entity.aniDelay)
+						Entity.aniTick += 1;
+					else {
+						Entity.aniTick = 0;
+						if (Entity.aniFrame < Entity.coinSprites.size() - 1)
+							Entity.aniFrame += 1;
+						else
+							Entity.aniFrame = 0;
+					}
 				}
 			}
 
@@ -426,16 +512,16 @@ public class ac extends JPanel implements Runnable {
 			}
 
 			// score
-			g.drawImage(Entity.coinSprites.get(0), aa.width - 75, 5, null);
+			g.drawImage(Entity.coinSprites.get(0), aa.width - 125, 5, null);
 			g.setColor(Color.WHITE);
 			g.setFont(btnFont);
-			g.drawString(Integer.toString(score), aa.width - 35, 27);
+			g.drawString(Integer.toString(score), aa.width - 85, 27);
 
 			drawText(g);
 		}
 
 		// draw main menu
-		else if (menu){
+		else if (state == MENU){
 			// draw the moving star background
 			for (int i = 0; i < menuStarX.size(); i++){
 				int x = menuStarX.get(i);
@@ -488,7 +574,7 @@ public class ac extends JPanel implements Runnable {
 			createButton(g, lbBtn, defColor, hoverColor, "Leaderboard", textColor, true);
 			createButton(g, quitBtn, defColor, hoverColor, "Exit Game", textColor);
 		}
-		else if (endLevelMenu){
+		else if (state == LEVEL_MENU){
 
 			Color hoverColor = Color.YELLOW;
 			Color defColor = new Color(0xBBBBBB);
@@ -507,7 +593,7 @@ public class ac extends JPanel implements Runnable {
 		}
 
 		// draw the pause menu
-		if (paused){
+		if (state == PAUSED){
 			Color hoverColor = Color.YELLOW;
 			Color defColor = new Color(0xBBBBBB);
 			Color textColor = new Color(0x660000);
@@ -520,28 +606,31 @@ public class ac extends JPanel implements Runnable {
 
 		if (ad.endLevel){
 			ad.endLevel = false;
-			inGame = false;
-			endLevelMenu = true;
+			state = LEVEL_MENU;
 		}
 	}
 
 	public void run(){
 		while (running){
-			if (inGame){
+			if (state == GAME){
 				ad.run();
 				ba.run();
 				fpsSetter();
 				repaint();
 			}
-			else if (menu){
+			else if (state == MENU){
 				fpsSetter();
 				repaint();
 			}
-			else if (paused){
+			else if (state == PAUSED){
 				fpsSetter();
 				repaint();
 			}
-			else if (endLevelMenu){
+			else if (state == LEVEL_MENU){
+				fpsSetter();
+				repaint();
+			}
+			else if (state == KONAMI){
 				fpsSetter();
 				repaint();
 			}

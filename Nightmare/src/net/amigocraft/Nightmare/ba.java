@@ -138,7 +138,7 @@ public class ba extends JPanel {
 					loop = e.getSprites();
 				else
 					loop = e.getSpritesF();
-				if (ac.inGame){
+				if (ac.state == State.GAME){
 					if (e.getAnimationStage() < loop.size() - 1){
 						e.setAnimationStage(e.getAnimationStage() + 1);
 					}

@@ -33,12 +33,14 @@ public class ad {
 	public static int fallFrame = 0;
 	public static int movementFrame = 0;
 	public static int keyJump = KeyEvent.VK_UP;
+	public static int keyFall = KeyEvent.VK_DOWN;
 	public static int keyLeft = KeyEvent.VK_LEFT;
 	public static int keyRight = KeyEvent.VK_RIGHT;
 	public static int keyJump2 = KeyEvent.VK_SPACE;
 	public static int keyLeft2 = KeyEvent.VK_A;
 	public static int keyRight2 = KeyEvent.VK_D;
 	public static int keyJump3 = KeyEvent.VK_W;
+	public static int keyFall2 = KeyEvent.VK_S;
 	public static int keyPause = KeyEvent.VK_ESCAPE;
 	public static int jumpFrame = 0;
 	public static int jumpSpeedFrame = 0;
@@ -78,6 +80,8 @@ public class ad {
 
 	public static boolean falling = true;
 	public static Direction dir = STILL;
+	public static boolean flyUp = false;
+	public static boolean flyDown = false;
 	public static boolean jumping = false;
 	public static boolean dead = false;
 	public static boolean invincible = false;
@@ -123,20 +127,14 @@ public class ad {
 			catch (Exception e){
 				e.printStackTrace();
 			}
-			character.x = aa.width / 2;
-			character.y = aa.height / 2;
-			xs = 0;
-			ys = 0;
-			backgroundLoc = 0;
-			centerX = aa.width / 2 + xs;
-			centerY = aa.width / 2 + ys;
-			ba.defineEnemies(ac.level);
-			if (lives > 0)
-				lives -= 1;
-			else {
-				lives = ad.defaultLives;
-				ac.menu = true;
-				ac.inGame = false;
+			ac.resetLevel();
+			if (!ac.infLives){
+				if (lives > 0)
+					lives -= 1;
+				else {
+					lives = ad.defaultLives;
+					ac.state = State.MENU;
+				}
 			}
 			health = defaultHealth;
 			dead = false;
@@ -146,11 +144,17 @@ public class ad {
 			if (!falling && knockback == STILL){
 				if (jumpSpeedFrame >= jumpSpeed){
 					jumpSpeedFrame = 0;
-					if (jumpFrame <= jumpLength){
-						character.y -= 1;
-						ys -= 1;
-						centerY -= 1;
-						jumpFrame += 1;
+					int len = jumpLength;
+					int dis = 1;
+					if (ac.moonJump){
+						len = len * 2;
+						//dis = dis / 2;
+					}
+					if (jumpFrame <= len){
+						character.y -= dis;
+						ys -= dis;
+						centerY -= dis;
+						jumpFrame += dis;
 					}
 					else {
 						if (jumpFreezeFrame >= jumpFreezeLength){
@@ -173,21 +177,23 @@ public class ad {
 			falling = true;
 
 		if (falling){
-			if (knockback == STILL){
-				if (fallFrame >= fallSpeed){
-					character.y += 1;
-					if (character.y <= 700){
-						ys += 1;
-						centerY += 1;
+			if (!ac.fly){
+				if (knockback == STILL){
+					if (fallFrame >= fallSpeed){
+						character.y += 1;
+						if (character.y <= 700){
+							ys += 1;
+							centerY += 1;
+						}
+						else if (character.y >= 1100){
+							dead = true;
+						}
+						falling = true;
+						fallFrame = 0;
 					}
-					else if (character.y >= 1100){
-						dead = true;
-					}
-					falling = true;
-					fallFrame = 0;
+					else
+						fallFrame += 1;
 				}
-				else
-					fallFrame += 1;
 			}
 		}
 
@@ -264,6 +270,18 @@ public class ad {
 			else if (lastDir == 1)
 				charSprite = boyStandRight;
 		}
+		
+		if (flyUp){
+			character.y -= 1;
+			ys -= 1;
+			centerY -= 1;
+		}
+		
+		else if (flyDown){
+			character.y += 1;
+			ys += 1;
+			centerY += 1;
+		}
 
 		// handle invincibility
 		if (invincibleTick >= invincibleTime && invincible){
@@ -329,13 +347,16 @@ public class ad {
 		if (bb.levelEnd.contains(new Point(character.x + character.width, character.y + character.height))){
 			endLevel = true;
 		}
-		
+
 		// check if character intersects coins
 		List<Entity> destroyEntities = new ArrayList<Entity>();
 		for (Entity e : Entity.entities){
 			if (e.checkPlayerIntersect() && e.getType().equals("coin")){
-				ac.score += ac.coinValue;
-				ac.playCoinSound();
+				if (ac.superCoins)
+					ac.score += ac.coinValue * 10;
+				else
+					ac.score += ac.coinValue;
+				ac.playSound("/sounds/coin.wav");
 				destroyEntities.add(e);
 			}
 		}
