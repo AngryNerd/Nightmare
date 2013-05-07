@@ -18,6 +18,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RasterOp;
 import java.awt.image.RescaleOp;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -284,8 +286,9 @@ public class ac extends JPanel implements Runnable {
 	public void playMusic(){
 		try {
 			Clip clip = AudioSystem.getClip();
-			AudioInputStream aIs = AudioSystem.getAudioInputStream
-					(ac.class.getResourceAsStream("/sounds/music.wav"));
+			InputStream is = ac.class.getResourceAsStream("/sounds/music.wav");
+			BufferedInputStream bIs = new BufferedInputStream(is);
+			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 		}
@@ -359,8 +362,9 @@ public class ac extends JPanel implements Runnable {
 	public static void playSound(String path){
 		try {
 			Clip clip = AudioSystem.getClip();
-			AudioInputStream aIs = AudioSystem.getAudioInputStream
-					(ac.class.getResourceAsStream(path));
+			InputStream is = ac.class.getResourceAsStream("/sounds/coin.wav");
+			BufferedInputStream bIs = new BufferedInputStream(is);
+			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
 			clip.start();
 		}
