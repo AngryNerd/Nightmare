@@ -283,6 +283,7 @@ public class ac extends JPanel implements Runnable {
 		game.start();
 	}
 
+	// start background audio loop
 	public void playMusic(){
 		try {
 			Clip clip = AudioSystem.getClip();
