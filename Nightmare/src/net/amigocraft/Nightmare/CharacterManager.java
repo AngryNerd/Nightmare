@@ -13,7 +13,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-public class ad {
+public class CharacterManager {
 
 	public static Rectangle character;
 
@@ -47,8 +47,8 @@ public class ad {
 	public static int jumpFreezeFrame = 0;
 	public static int xs = 0;
 	public static int ys = 0;
-	public static int centerX = aa.width / 2 + xs;
-	public static int centerY = aa.width / 2 + ys;
+	public static int centerX = WindowManager.width / 2 + xs;
+	public static int centerY = WindowManager.width / 2 + ys;
 	public static int invincibleTick = 0;
 	public static int knockbackFrame = 0;
 	public static int knockbackTick = 0;
@@ -88,7 +88,7 @@ public class ad {
 	public static Direction knockback = STILL;
 	public static boolean endLevel = false;
 	public static int health = defaultHealth;
-	public static int backgroundSpeed = ad.movementSpeed * starSpeed;
+	public static int backgroundSpeed = CharacterManager.movementSpeed * starSpeed;
 
 	public static int lives = defaultLives;
 
@@ -96,13 +96,13 @@ public class ad {
 
 	public static Rectangle defineChar(){
 		try {
-			boyStandFront = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandFront.gif"));
-			boyStandLeft = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandLeft.gif"));
-			boyWalkLeft1 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft1.gif"));
-			boyWalkLeft2 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft2.gif"));
-			boyStandRight = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyStandRight.gif"));
-			boyWalkRight1 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkRight1.gif"));
-			boyWalkRight2 = ImageIO.read(ad.class.getClassLoader().getResourceAsStream("images/BoyWalkRight2.gif"));
+			boyStandFront = ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/BoyStandFront.gif"));
+			boyStandLeft = ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/BoyStandLeft.gif"));
+			boyWalkLeft1 = ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft1.gif"));
+			boyWalkLeft2 = ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/BoyWalkLeft2.gif"));
+			boyStandRight = ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/BoyStandRight.gif"));
+			boyWalkRight1 = ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/BoyWalkRight1.gif"));
+			boyWalkRight2 = ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/BoyWalkRight2.gif"));
 			walkLeft.add(boyWalkLeft1);
 			walkLeft.add(boyWalkLeft2);
 			walkRight.add(boyWalkRight1);
@@ -112,7 +112,7 @@ public class ad {
 		catch (IOException ex){
 			System.out.println(ex);
 		}
-		return character = new Rectangle((aa.width / 2) - (characterWidth / 2), (aa.height / 2) - (characterHeight / 2), characterWidth, characterHeight);
+		return character = new Rectangle((WindowManager.width / 2) - (characterWidth / 2), (WindowManager.height / 2) - (characterHeight / 2), characterWidth, characterHeight);
 	}
 
 	public static void run(){
@@ -127,13 +127,13 @@ public class ad {
 			catch (Exception e){
 				e.printStackTrace();
 			}
-			ac.resetLevel();
-			if (!ac.infLives){
+			GameManager.resetLevel();
+			if (!GameManager.infLives){
 				if (lives > 0)
 					lives -= 1;
 				else {
-					lives = ad.defaultLives;
-					ac.state = State.MENU;
+					lives = CharacterManager.defaultLives;
+					GameManager.state = State.MENU;
 				}
 			}
 			dead = false;
@@ -145,7 +145,7 @@ public class ad {
 					jumpSpeedFrame = 0;
 					int len = jumpLength;
 					int dis = 1;
-					if (ac.moonJump){
+					if (GameManager.moonJump){
 						len = len * 2;
 						//dis = dis / 2;
 					}
@@ -170,13 +170,13 @@ public class ad {
 					jumpSpeedFrame += 1;
 			}
 		}
-		if ((ba.containsFeet(foot1) || ba.containsFeet(foot2)) || jumping)
+		if ((LivingEntityManager.containsFeet(foot1) || LivingEntityManager.containsFeet(foot2)) || jumping)
 			falling = false;
 		else
 			falling = true;
 
 		if (falling){
-			if (!ac.fly){
+			if (!GameManager.fly){
 				if (knockback == STILL){
 					if (fallFrame >= fallSpeed){
 						character.y += 1;
@@ -343,7 +343,7 @@ public class ad {
 		}
 
 		// check if character is at level end
-		if (bb.levelEnd.contains(new Point(character.x + character.width, character.y + character.height))){
+		if (PlatformManager.levelEnd.contains(new Point(character.x + character.width, character.y + character.height))){
 			endLevel = true;
 		}
 
@@ -351,11 +351,11 @@ public class ad {
 		List<Entity> destroyEntities = new ArrayList<Entity>();
 		for (Entity e : Entity.entities){
 			if (e.checkPlayerIntersect() && e.getType().equals("coin")){
-				if (ac.superCoins)
-					ac.score += ac.coinValue * 10;
+				if (GameManager.superCoins)
+					GameManager.score += GameManager.coinValue * 10;
 				else
-					ac.score += ac.coinValue;
-				ac.playSound("/sounds/coin.wav");
+					GameManager.score += GameManager.coinValue;
+				GameManager.playSound("/sounds/coin.wav");
 				destroyEntities.add(e);
 			}
 		}

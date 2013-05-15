@@ -9,16 +9,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class aa {
+public class WindowManager {
 	
-	public static ab f;
+	public static FrameManager f;
 	//public static int width = Toolkit.getDefaultToolkit().getScreenSize().width;
 	//public static int height = Toolkit.getDefaultToolkit().getScreenSize().height;
 	public static int width = 800;
 	public static int height = 600;
 	
 	public static void main(String[] args){
-		f = new ab();
+		f = new FrameManager();
 		f.setVisible(true);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setResizable(false);
@@ -27,7 +27,7 @@ public class aa {
 		f.setLocationRelativeTo(null);
 		Image icon;
 		try {
-			icon = ImageIO.read(aa.class.getResourceAsStream("/images/BoyStandFront.gif"));
+			icon = ImageIO.read(WindowManager.class.getResourceAsStream("/images/BoyStandFront.gif"));
 			f.setIconImage(icon);
 		}
 		catch (IOException e){

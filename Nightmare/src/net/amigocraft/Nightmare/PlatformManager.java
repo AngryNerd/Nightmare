@@ -7,13 +7,13 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-public class bb extends JPanel {
+public class PlatformManager extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	public static int floorHeight = 20;
-	public static int centerX = ad.centerX;
-	public static int centerY = ad.centerY;
+	public static int centerX = CharacterManager.centerX;
+	public static int centerY = CharacterManager.centerY;
 
 	public static boolean objectsDefined = false;
 

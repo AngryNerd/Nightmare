@@ -98,7 +98,7 @@ public class Entity {
 	
 	public boolean checkPlayerIntersect(){
 		Rectangle r = new Rectangle(x, y, width, height);
-		if (r.intersects(ad.character))
+		if (r.intersects(CharacterManager.character))
 			return true;
 		return false;
 	}
@@ -121,8 +121,8 @@ public class Entity {
 	}
 	
 	public static void setupEntities(){
-		new Entity(150, bb.floors.get(0).y - bb.floorHeight - 10, "coin", 1);
-		new Entity(200, bb.floors.get(0).y - bb.floorHeight - 10, "coin", 1);
-		new Entity(250, bb.floors.get(0).y - bb.floorHeight - 10, "coin", 1);
+		new Entity(150, PlatformManager.floors.get(0).y - PlatformManager.floorHeight - 10, "coin", 1);
+		new Entity(200, PlatformManager.floors.get(0).y - PlatformManager.floorHeight - 10, "coin", 1);
+		new Entity(250, PlatformManager.floors.get(0).y - PlatformManager.floorHeight - 10, "coin", 1);
 	}
 }

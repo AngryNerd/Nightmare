@@ -14,7 +14,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class ba extends JPanel {
+public class LivingEntityManager extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,14 +39,14 @@ public class ba extends JPanel {
 		enemyDim.clear();
 		enemyDim.put("skeleton", new int[]{26, 46});
 		try {
-			skeleton.add(ImageIO.read(ad.class.getResourceAsStream("/images/Skeleton1.png")));
-			skeleton.add(ImageIO.read(ad.class.getResourceAsStream("/images/Skeleton2.png")));
-			skeleton.add(ImageIO.read(ad.class.getResourceAsStream("/images/Skeleton3.png")));
-			skeleton.add(ImageIO.read(ad.class.getResourceAsStream("/images/Skeleton4.png")));
-			skeletonF.add(ImageIO.read(ad.class.getResourceAsStream("/images/SkeletonF1.png")));
-			skeletonF.add(ImageIO.read(ad.class.getResourceAsStream("/images/SkeletonF2.png")));
-			skeletonF.add(ImageIO.read(ad.class.getResourceAsStream("/images/SkeletonF3.png")));
-			skeletonF.add(ImageIO.read(ad.class.getResourceAsStream("/images/SkeletonF4.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton1.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton2.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton3.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton4.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF1.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF2.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF3.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF4.png")));
 			enemySprites.put("skeleton", skeleton);
 			enemySpritesF.put("skeleton", skeletonF);
 		} 
@@ -54,8 +54,8 @@ public class ba extends JPanel {
 			e.printStackTrace();
 		}
 		enemies.clear();
-		createEnemy(posRel(0, 1, 3), bb.floors.get(0).y, "skeleton", level);
-		createEnemy(posRel(1, 1, 2), bb.floors.get(1).y, "skeleton", level);
+		createEnemy(posRel(0, 1, 3), PlatformManager.floors.get(0).y, "skeleton", level);
+		createEnemy(posRel(1, 1, 2), PlatformManager.floors.get(1).y, "skeleton", level);
 	}
 	
 	public static void createEnemy(int x, int y, String type, int level){
@@ -132,13 +132,13 @@ public class ba extends JPanel {
 			}
 			
 			// animation
-			if (e.getAnimationFrame() >= ba.aniSpeed){
+			if (e.getAnimationFrame() >= LivingEntityManager.aniSpeed){
 				List<Image> loop = null;
 				if (e.getDirection() == LEFT)
 					loop = e.getSprites();
 				else
 					loop = e.getSpritesF();
-				if (ac.state == State.GAME){
+				if (GameManager.state == State.GAME){
 					if (e.getAnimationStage() < loop.size() - 1){
 						e.setAnimationStage(e.getAnimationStage() + 1);
 					}
@@ -150,26 +150,26 @@ public class ba extends JPanel {
 			else
 				e.setAnimationFrame(e.getAnimationFrame() + 1);
 
-			if (new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight()).intersects(ad.character)){
-				if (!ad.invincible){
-					ac.playSound("/sounds/hurt.wav");
-					ad.health -= 3;
-					if (e.getX() + e.getWidth() / 2 > ad.character.x + ad.characterWidth / 2)
-						ad.knockback = LEFT;
+			if (new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight()).intersects(CharacterManager.character)){
+				if (!CharacterManager.invincible){
+					GameManager.playSound("/sounds/hurt.wav");
+					CharacterManager.health -= 3;
+					if (e.getX() + e.getWidth() / 2 > CharacterManager.character.x + CharacterManager.characterWidth / 2)
+						CharacterManager.knockback = LEFT;
 					else
-						ad.knockback = RIGHT;
-					if (ad.health > 0)
-						ad.invincible = true;
+						CharacterManager.knockback = RIGHT;
+					if (CharacterManager.health > 0)
+						CharacterManager.invincible = true;
 					else
-						ad.dead = true;
+						CharacterManager.dead = true;
 				}
 			}
 		}
 	}
 
 	public static boolean containsFeet(Point f1){
-		for (int i = 0; i < bb.floors.size(); i++){
-			if (bb.floors.get(i).contains(f1)){
+		for (int i = 0; i < PlatformManager.floors.size(); i++){
+			if (PlatformManager.floors.get(i).contains(f1)){
 				return true;
 			}
 		}
@@ -177,6 +177,6 @@ public class ba extends JPanel {
 	}
 	
 	public static int posRel(int floorIndex, int num, int den){
-		return (int)(bb.floors.get(floorIndex).x + (bb.floors.get(floorIndex).width * (num / (double)den)));
+		return (int)(PlatformManager.floors.get(floorIndex).x + (PlatformManager.floors.get(floorIndex).width * (num / (double)den)));
 	}
 }

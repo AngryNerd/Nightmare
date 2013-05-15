@@ -28,7 +28,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.JPanel;
 
-public class ac extends JPanel implements Runnable {
+public class GameManager extends JPanel implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -54,10 +54,10 @@ public class ac extends JPanel implements Runnable {
 	public static int coinValue = 10;
 
 	// define main menu buttons
-	Rectangle playBtn = new Rectangle(aa.width / 2 - 80, 175, 160, 40);
-	Rectangle lcBtn = new Rectangle(aa.width / 2 - 80, 245, 160, 40);
-	Rectangle lbBtn = new Rectangle(aa.width / 2 - 80, 315, 160, 40);
-	Rectangle quitBtn = new Rectangle(aa.width / 2 - 80, aa.height - 90, 160, 40);
+	Rectangle playBtn = new Rectangle(WindowManager.width / 2 - 80, 175, 160, 40);
+	Rectangle lcBtn = new Rectangle(WindowManager.width / 2 - 80, 245, 160, 40);
+	Rectangle lbBtn = new Rectangle(WindowManager.width / 2 - 80, 315, 160, 40);
+	Rectangle quitBtn = new Rectangle(WindowManager.width / 2 - 80, WindowManager.height - 90, 160, 40);
 
 	// define inter-level buttons
 	Rectangle nextBtn = playBtn;
@@ -65,20 +65,20 @@ public class ac extends JPanel implements Runnable {
 	Rectangle endBtn = lbBtn;
 
 	// define pause menu buttons
-	Rectangle resBtn = new Rectangle(aa.width / 2 - 80, 150, 160, 40);
-	Rectangle restartBtn = new Rectangle(aa.width / 2 - 80, 220, 160, 40);
-	Rectangle pauseQuitBtn = new Rectangle(aa.width / 2 - 80, 290, 160, 40);
+	Rectangle resBtn = new Rectangle(WindowManager.width / 2 - 80, 150, 160, 40);
+	Rectangle restartBtn = new Rectangle(WindowManager.width / 2 - 80, 220, 160, 40);
+	Rectangle pauseQuitBtn = new Rectangle(WindowManager.width / 2 - 80, 290, 160, 40);
 
 	// define konami code checkboxes
 	int boxDim = 30;
 	int sideOffset = 200;
 	Rectangle moonJumpBox = new Rectangle(sideOffset, 150, boxDim, boxDim);
 	public static boolean moonJump = false;
-	Rectangle flyBox = new Rectangle(aa.width - sideOffset - boxDim, 150, boxDim, boxDim);
+	Rectangle flyBox = new Rectangle(WindowManager.width - sideOffset - boxDim, 150, boxDim, boxDim);
 	public static boolean fly = false;
 	Rectangle infLivesBox = new Rectangle(sideOffset, 250, boxDim, boxDim);
 	public static boolean infLives = false;
-	Rectangle superCoinsBox = new Rectangle(aa.width - sideOffset - boxDim, 250, boxDim, boxDim);
+	Rectangle superCoinsBox = new Rectangle(WindowManager.width - sideOffset - boxDim, 250, boxDim, boxDim);
 	public static boolean superCoins = false;
 	Rectangle invBox = new Rectangle(sideOffset, 350, boxDim, boxDim);
 	public static boolean inv = false;
@@ -90,40 +90,40 @@ public class ac extends JPanel implements Runnable {
 
 	public Thread game;
 
-	public ac(ab f){
+	public GameManager(FrameManager f){
 
 		// Key Listener
 		f.addKeyListener(new KeyAdapter(){
 			public void keyPressed(KeyEvent e){
-				if (e.getKeyCode() == ad.keyLeft || e.getKeyCode() == ad.keyLeft2){
-					if (ad.dir != LEFT)
-						ad.aniTickFrame = ad.aniTicks;
-					ad.dir = LEFT;
+				if (e.getKeyCode() == CharacterManager.keyLeft || e.getKeyCode() == CharacterManager.keyLeft2){
+					if (CharacterManager.dir != LEFT)
+						CharacterManager.aniTickFrame = CharacterManager.aniTicks;
+					CharacterManager.dir = LEFT;
 				}
 
-				else if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
-					if (ad.dir != RIGHT)
-						ad.aniTickFrame = ad.aniTicks;
-					ad.dir = RIGHT;
+				else if (e.getKeyCode() == CharacterManager.keyRight || e.getKeyCode() == CharacterManager.keyRight2){
+					if (CharacterManager.dir != RIGHT)
+						CharacterManager.aniTickFrame = CharacterManager.aniTicks;
+					CharacterManager.dir = RIGHT;
 				}
-				else if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
+				else if (e.getKeyCode() == CharacterManager.keyJump || e.getKeyCode() == CharacterManager.keyJump2 || e.getKeyCode() == CharacterManager.keyJump3){
 					if (!fly){
-						if (!ad.falling && state == GAME){
-							ad.jumping = true;
+						if (!CharacterManager.falling && state == GAME){
+							CharacterManager.jumping = true;
 						}
 					}
 					else {
-						ad.flyUp = true;
-						ad.flyDown = false;
+						CharacterManager.flyUp = true;
+						CharacterManager.flyDown = false;
 					}
 				}
-				else if (e.getKeyCode() == ad.keyFall || e.getKeyCode() == ad.keyFall2){
+				else if (e.getKeyCode() == CharacterManager.keyFall || e.getKeyCode() == CharacterManager.keyFall2){
 					if (fly){
-						ad.flyDown = true;
-						ad.flyUp = false;
+						CharacterManager.flyDown = true;
+						CharacterManager.flyUp = false;
 					}
 				}
-				else if (e.getKeyCode() == ad.keyPause){
+				else if (e.getKeyCode() == CharacterManager.keyPause){
 					if (state == GAME){
 						state = PAUSED;
 					}
@@ -165,26 +165,26 @@ public class ac extends JPanel implements Runnable {
 			}
 
 			public void keyReleased(KeyEvent e){
-				if (e.getKeyCode() == ad.keyLeft || e.getKeyCode() == ad.keyLeft2){
-					ad.dir = STILL;
-					if (ad.dir != RIGHT){
-						ad.lastDir = 0;
+				if (e.getKeyCode() == CharacterManager.keyLeft || e.getKeyCode() == CharacterManager.keyLeft2){
+					CharacterManager.dir = STILL;
+					if (CharacterManager.dir != RIGHT){
+						CharacterManager.lastDir = 0;
 					}
 				}
 
-				if (e.getKeyCode() == ad.keyRight || e.getKeyCode() == ad.keyRight2){
-					ad.dir = STILL;
-					if (ad.dir != LEFT){
-						ad.lastDir = 1;
+				if (e.getKeyCode() == CharacterManager.keyRight || e.getKeyCode() == CharacterManager.keyRight2){
+					CharacterManager.dir = STILL;
+					if (CharacterManager.dir != LEFT){
+						CharacterManager.lastDir = 1;
 					}
 				}
 				
-				if (e.getKeyCode() == ad.keyJump || e.getKeyCode() == ad.keyJump2 || e.getKeyCode() == ad.keyJump3){
-					ad.flyUp = false;
+				if (e.getKeyCode() == CharacterManager.keyJump || e.getKeyCode() == CharacterManager.keyJump2 || e.getKeyCode() == CharacterManager.keyJump3){
+					CharacterManager.flyUp = false;
 				}
 				
-				if (e.getKeyCode() == ad.keyFall || e.getKeyCode() == ad.keyFall2){
-					ad.flyDown = false;
+				if (e.getKeyCode() == CharacterManager.keyFall || e.getKeyCode() == CharacterManager.keyFall2){
+					CharacterManager.flyDown = false;
 				}
 
 			}
@@ -194,16 +194,16 @@ public class ac extends JPanel implements Runnable {
 		f.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e){
 				if (e.getButton() == 1){
-					Point mousePos = new Point(aa.f.getMousePosition().x, aa.f.getMousePosition().y - 24);
+					Point mousePos = new Point(WindowManager.f.getMousePosition().x, WindowManager.f.getMousePosition().y - 24);
 					if (state != GAME){
 						if (state == MENU){
 							if (playBtn.contains(mousePos)){
 								state = GAME;
 								level = 1;
-								ad.invincible = true;
+								CharacterManager.invincible = true;
 							}
 							else if (quitBtn.contains(mousePos)){
-								aa.pullThePlug();
+								WindowManager.pullThePlug();
 							}
 						}
 						else if (state == PAUSED){
@@ -211,7 +211,7 @@ public class ac extends JPanel implements Runnable {
 								state = GAME;
 							}
 							else if (restartBtn.contains(mousePos)){
-								ad.lives = ad.prevLives;
+								CharacterManager.lives = CharacterManager.prevLives;
 								state = GAME;
 								resetLevel();
 							}
@@ -221,13 +221,13 @@ public class ac extends JPanel implements Runnable {
 						}
 						else if (state == LEVEL_MENU){
 							if (nextBtn.contains(mousePos)){
-								ad.prevLives = ad.lives;
+								CharacterManager.prevLives = CharacterManager.lives;
 								level += 1;
 								resetLevel();
 								state = GAME;
 							}
 							else if (repBtn.contains(mousePos)){
-								ad.lives = ad.prevLives;
+								CharacterManager.lives = CharacterManager.prevLives;
 								resetLevel();
 								state = GAME;
 							}
@@ -263,7 +263,7 @@ public class ac extends JPanel implements Runnable {
 							else if (invBox.contains(mousePos)){
 								if (inv){
 									inv = false;
-									ad.invincible = false;
+									CharacterManager.invincible = false;
 								}
 								else
 									inv = true;
@@ -287,7 +287,7 @@ public class ac extends JPanel implements Runnable {
 	public void playMusic(){
 		try {
 			Clip clip = AudioSystem.getClip();
-			InputStream is = ac.class.getResourceAsStream("/sounds/music.wav");
+			InputStream is = GameManager.class.getResourceAsStream("/sounds/music.wav");
 			BufferedInputStream bIs = new BufferedInputStream(is);
 			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
@@ -300,32 +300,32 @@ public class ac extends JPanel implements Runnable {
 
 	// Define objects
 	public void defineObjects(){
-		ad.character = ad.defineChar();
-		bb.defineFloors(level);
-		ba.defineEnemies(level);
+		CharacterManager.character = CharacterManager.defineChar();
+		PlatformManager.defineFloors(level);
+		LivingEntityManager.defineEnemies(level);
 		Entity.initialize();
 		Entity.setupEntities();
 
 		// define star locations
-		for (int i = 0; i < ad.starNumber; i++){
-			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
-			int y = 0 + (int)(Math.random() * ((aa.height - 0) + 1));
-			ad.starX.add(x);
-			ad.starY.add(y);
+		for (int i = 0; i < CharacterManager.starNumber; i++){
+			int x = 0 + (int)(Math.random() * ((WindowManager.width - 0) + 1));
+			int y = 0 + (int)(Math.random() * ((WindowManager.height - 0) + 1));
+			CharacterManager.starX.add(x);
+			CharacterManager.starY.add(y);
 		}
-		for (int i = 0; i < ad.starNumber; i++){
-			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
-			int y = 0 + (int)(Math.random() * ((aa.height - 0) + 1));
+		for (int i = 0; i < CharacterManager.starNumber; i++){
+			int x = 0 + (int)(Math.random() * ((WindowManager.width - 0) + 1));
+			int y = 0 + (int)(Math.random() * ((WindowManager.height - 0) + 1));
 			menuStarX.add(x);
 			menuStarY.add(y);
 		}
 
 		// define custom fonts
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(45f);
-			smallFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(20f);
-			titleFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(85f);
-			btnFont = Font.createFont(Font.TRUETYPE_FONT, ac.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(25f);
+			font = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(45f);
+			smallFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(20f);
+			titleFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(85f);
+			btnFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(25f);
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
@@ -333,37 +333,37 @@ public class ac extends JPanel implements Runnable {
 
 		objectsDefined = true;
 		repaint();
-		if (ad.aniFrame == 0)
-			ad.aniFrame = 1;
+		if (CharacterManager.aniFrame == 0)
+			CharacterManager.aniFrame = 1;
 		else
-			ad.aniFrame = 0;
+			CharacterManager.aniFrame = 0;
 	}
 
 	public static void resetLevel(){
-		ad.health = ad.defaultHealth;
-		ad.invincibleTick = 0;
-		ad.invincible = true;
-		ad.character = ad.defineChar();
-		bb.defineFloors(level);
-		ba.defineEnemies(level);
-		ad.xs = 0;
-		ad.ys = 0;
-		ad.starX.clear();
-		ad.starY.clear();
-		for (int i = 0; i < ad.starNumber; i++){
-			int x = 0 + (int)(Math.random() * ((aa.width - 0) + 1));
-			int y = 0 + (int)(Math.random() * ((aa.height - 0) + 1));
-			ad.starX.add(x);
-			ad.starY.add(y);
+		CharacterManager.health = CharacterManager.defaultHealth;
+		CharacterManager.invincibleTick = 0;
+		CharacterManager.invincible = true;
+		CharacterManager.character = CharacterManager.defineChar();
+		PlatformManager.defineFloors(level);
+		LivingEntityManager.defineEnemies(level);
+		CharacterManager.xs = 0;
+		CharacterManager.ys = 0;
+		CharacterManager.starX.clear();
+		CharacterManager.starY.clear();
+		for (int i = 0; i < CharacterManager.starNumber; i++){
+			int x = 0 + (int)(Math.random() * ((WindowManager.width - 0) + 1));
+			int y = 0 + (int)(Math.random() * ((WindowManager.height - 0) + 1));
+			CharacterManager.starX.add(x);
+			CharacterManager.starY.add(y);
 		}
-		ad.centerX = aa.width / 2 + ad.xs;
-		ad.centerY = aa.width / 2 + ad.ys;
+		CharacterManager.centerX = WindowManager.width / 2 + CharacterManager.xs;
+		CharacterManager.centerY = WindowManager.width / 2 + CharacterManager.ys;
 	}
 
 	public static void playSound(String path){
 		try {
 			Clip clip = AudioSystem.getClip();
-			InputStream is = ac.class.getResourceAsStream(path);
+			InputStream is = GameManager.class.getResourceAsStream(path);
 			BufferedInputStream bIs = new BufferedInputStream(is);
 			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
@@ -377,20 +377,20 @@ public class ac extends JPanel implements Runnable {
 	public static void colorFloors(Graphics g, Rectangle f){
 		g.setColor(new Color(0x6600000));
 		try {
-			g.fillRect(f.x - ad.xs, f.y - ad.ys, f.width, f.height);
+			g.fillRect(f.x - CharacterManager.xs, f.y - CharacterManager.ys, f.width, f.height);
 		}
 		catch (Exception e){}
 	}
 
 	public static void colorChar(Graphics g, Rectangle f){
 		g.setColor(Color.BLACK);
-		g.fillRect(f.x - ad.xs, f.y - ad.ys, f.width, f.height);
+		g.fillRect(f.x - CharacterManager.xs, f.y - CharacterManager.ys, f.width, f.height);
 	}
 
 	public int centerText(Graphics g, String text){
 		int stringLen = (int)
 				g.getFontMetrics().getStringBounds(text, g).getWidth();
-		return aa.width / 2 - stringLen / 2;
+		return WindowManager.width / 2 - stringLen / 2;
 	}
 
 	public void drawText(Graphics g){
@@ -399,24 +399,24 @@ public class ac extends JPanel implements Runnable {
 
 		// draw lives
 		g.setColor(Color.WHITE);
-		g.drawImage(ad.boyStandFront, aa.width - 100, aa.height - 90, this);
-		g.drawString("x", aa.width - 65, aa.height - 50);
-		g.drawString(Integer.toString(ad.lives), aa.width - 40, aa.height - 50);
+		g.drawImage(CharacterManager.boyStandFront, WindowManager.width - 100, WindowManager.height - 90, this);
+		g.drawString("x", WindowManager.width - 65, WindowManager.height - 50);
+		g.drawString(Integer.toString(CharacterManager.lives), WindowManager.width - 40, WindowManager.height - 50);
 
 		// draw pause message
 		/*if (!inGame && paused){
 			g.setColor(Color.WHITE);
-			g.drawString("Paused", centerText(g, "Paused"), aa.height / 2);
+			g.drawString("Paused", centerText(g, "Paused"), WindowManager.height / 2);
 		}*/
 
 		// draw death messages
-		if (ad.dead){
+		if (CharacterManager.dead){
 			g.setColor(Color.RED);
-			if (ad.lives > 0){
-				g.drawString("FATALITY", centerText(g, "FATALITY"), aa.height / 2);
+			if (CharacterManager.lives > 0){
+				g.drawString("FATALITY", centerText(g, "FATALITY"), WindowManager.height / 2);
 			}
 			else {
-				g.drawString("GAME OVER", centerText(g, "GAME OVER"), aa.height / 2);
+				g.drawString("GAME OVER", centerText(g, "GAME OVER"), WindowManager.height / 2);
 			}
 		}
 
@@ -449,47 +449,47 @@ public class ac extends JPanel implements Runnable {
 		super.paintComponent(g);
 		
 		if (inv)
-			ad.invincible = true;
+			CharacterManager.invincible = true;
 
 		if (objectsDefined && state == GAME || state == PAUSED || state == KONAMI){
 
 			// draw background
-			for (int i = 0; i < ad.starX.size(); i++){
-				int x = ad.starX.get(i);
-				int y = ad.starY.get(i);
-				int backgroundArea = ad.character.x / (aa.width * ad.starSpeed);
+			for (int i = 0; i < CharacterManager.starX.size(); i++){
+				int x = CharacterManager.starX.get(i);
+				int y = CharacterManager.starY.get(i);
+				int backgroundArea = CharacterManager.character.x / (WindowManager.width * CharacterManager.starSpeed);
 				g.setColor(new Color(0x666666));
-				g.drawRect((x + (backgroundArea * aa.width)) + ad.backgroundLoc, y, 1, 1);
-				g.drawRect((x + ((backgroundArea - 1) * aa.width)) + ad.backgroundLoc, y, 1, 1);
-				g.drawRect((x + ((backgroundArea + 1) * aa.width)) + ad.backgroundLoc, y, 1, 1);
+				g.drawRect((x + (backgroundArea * WindowManager.width)) + CharacterManager.backgroundLoc, y, 1, 1);
+				g.drawRect((x + ((backgroundArea - 1) * WindowManager.width)) + CharacterManager.backgroundLoc, y, 1, 1);
+				g.drawRect((x + ((backgroundArea + 1) * WindowManager.width)) + CharacterManager.backgroundLoc, y, 1, 1);
 			}
 
 			// character
-			BufferedImage bi = new BufferedImage(ad.characterWidth, ad.characterHeight, BufferedImage.TYPE_INT_ARGB);
-			bi.getGraphics().drawImage(ad.charSprite, 0, 0 , null);
-			if (ad.invincible && !inv){
+			BufferedImage bi = new BufferedImage(CharacterManager.characterWidth, CharacterManager.characterHeight, BufferedImage.TYPE_INT_ARGB);
+			bi.getGraphics().drawImage(CharacterManager.charSprite, 0, 0 , null);
+			if (CharacterManager.invincible && !inv){
 				RasterOp rOp = new RescaleOp(new float[] {1.0f, 1.0f, 1.0f, 0.4f},
 						new float[] {0.0f, 0.0f, 0.0f, 0.0f}, null);
 			    Raster r = rOp.filter(bi.getData(), null);
 			    bi.setData(r);
 			}
-			g.drawImage(bi, ad.character.x - ad.xs, ad.character.y - ad.ys, this);
+			g.drawImage(bi, CharacterManager.character.x - CharacterManager.xs, CharacterManager.character.y - CharacterManager.ys, this);
 
 			// enemies
 			g.setColor(Color.WHITE);
-			for (Enemy e : ba.enemies){
+			for (Enemy e : LivingEntityManager.enemies){
 				Image sprite = null;
 				if (e.getDirection() == LEFT)
 					sprite = e.getSpritesF().get(e.getAnimationStage());
 				else
 					sprite = e.getSprites().get(e.getAnimationStage());
-				g.drawImage(sprite, e.getX() - ad.xs, e.getY() - ad.ys, this);
+				g.drawImage(sprite, e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
 			}
 
 			// floors
-			for (int i = 0; i < bb.floors.size(); i++){
-				if (bb.floorLevel.get(i) == level){
-					Rectangle r = bb.floors.get(i);
+			for (int i = 0; i < PlatformManager.floors.size(); i++){
+				if (PlatformManager.floorLevel.get(i) == level){
+					Rectangle r = PlatformManager.floors.get(i);
 					colorFloors(g, r);
 				}
 			}
@@ -513,12 +513,12 @@ public class ac extends JPanel implements Runnable {
 			
 			for (Entity e : drawEntities){
 				if (e.getType().equals("coin"))
-					g.drawImage(Entity.coinSprites.get(Entity.aniFrame), e.getX() - ad.xs, e.getY() - ad.ys, this);
+					g.drawImage(Entity.coinSprites.get(Entity.aniFrame), e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
 			}
 
 			// level end
 			g.setColor(Color.BLUE);
-			g.fillRect(bb.levelEnd.x - ad.xs, bb.levelEnd.y - ad.ys, bb.levelEnd.width, bb.levelEnd.height);
+			g.fillRect(PlatformManager.levelEnd.x - CharacterManager.xs, PlatformManager.levelEnd.y - CharacterManager.ys, PlatformManager.levelEnd.width, PlatformManager.levelEnd.height);
 
 			// draw health bar
 			int space = 2;
@@ -527,21 +527,21 @@ public class ac extends JPanel implements Runnable {
 			int x = 5;
 			g.setFont(smallFont);
 			g.setColor(Color.WHITE);
-			g.drawString("Health", x, aa.height - 45);
-			for (int i = 0; i < ad.health; i++){
-				int y = aa.height - 70 - (i * height) - (space * i);
+			g.drawString("Health", x, WindowManager.height - 45);
+			for (int i = 0; i < CharacterManager.health; i++){
+				int y = WindowManager.height - 70 - (i * height) - (space * i);
 				Color color = Color.GREEN;
-				if (ad.health <= 5)
+				if (CharacterManager.health <= 5)
 					color = Color.RED;
 				g.setColor(color);
 				g.fillRect(x, y, width, height);
 			}
 
 			// score
-			g.drawImage(Entity.coinSprites.get(0), aa.width - 125, 5, null);
+			g.drawImage(Entity.coinSprites.get(0), WindowManager.width - 125, 5, null);
 			g.setColor(Color.WHITE);
 			g.setFont(btnFont);
-			g.drawString(Integer.toString(score), aa.width - 85, 27);
+			g.drawString(Integer.toString(score), WindowManager.width - 85, 27);
 
 			drawText(g);
 		}
@@ -554,9 +554,9 @@ public class ac extends JPanel implements Runnable {
 				int y = menuStarY.get(i);
 				g.setColor(new Color(0x666666));
 				g.drawRect(x + menuBgLoc, y, 1, 1);
-				g.drawRect(x + menuBgLoc + aa.width, y, 1, 1);
+				g.drawRect(x + menuBgLoc + WindowManager.width, y, 1, 1);
 				if (menuBgFrame >= menuSpeed){
-					if (menuBgLoc > aa.width * -1)
+					if (menuBgLoc > WindowManager.width * -1)
 						menuBgLoc -= 1;
 					else
 						menuBgLoc = 0;
@@ -567,23 +567,23 @@ public class ac extends JPanel implements Runnable {
 			}
 
 			// draw the floor
-			Rectangle menuFloor = new Rectangle(0, aa.height - 135, aa.width, bb.floorHeight);
+			Rectangle menuFloor = new Rectangle(0, WindowManager.height - 135, WindowManager.width, PlatformManager.floorHeight);
 			g.setColor(new Color(0x660000));
 			g.fillRect(menuFloor.x, menuFloor.y, menuFloor.width, menuFloor.height);
 
 			// draw the character
-			if (ad.aniTickFrame >= ad.aniTicks - 1){
-				if (ad.aniFrame < ad.walkRight.size() - 1){
-					ad.aniFrame += 1;
+			if (CharacterManager.aniTickFrame >= CharacterManager.aniTicks - 1){
+				if (CharacterManager.aniFrame < CharacterManager.walkRight.size() - 1){
+					CharacterManager.aniFrame += 1;
 				}
 				else {
-					ad.aniFrame = 0;
+					CharacterManager.aniFrame = 0;
 				}
-				ad.aniTickFrame = 0;
+				CharacterManager.aniTickFrame = 0;
 			}
 			else
-				ad.aniTickFrame += 1;
-			g.drawImage(ad.walkRight.get(ad.aniFrame), aa.width / 2 - ad.walkRight.get(ad.aniFrame).getWidth(this) / 2, menuFloor.y - ad.character.height + 2, this);
+				CharacterManager.aniTickFrame += 1;
+			g.drawImage(CharacterManager.walkRight.get(CharacterManager.aniFrame), WindowManager.width / 2 - CharacterManager.walkRight.get(CharacterManager.aniFrame).getWidth(this) / 2, menuFloor.y - CharacterManager.character.height + 2, this);
 
 			// draw the title
 			g.setColor(new Color(0x660000));
@@ -630,8 +630,8 @@ public class ac extends JPanel implements Runnable {
 			createButton(g, pauseQuitBtn, defColor, hoverColor, "Wake Up", textColor);
 		}
 
-		if (ad.endLevel){
-			ad.endLevel = false;
+		if (CharacterManager.endLevel){
+			CharacterManager.endLevel = false;
 			state = LEVEL_MENU;
 		}
 	}
@@ -639,8 +639,8 @@ public class ac extends JPanel implements Runnable {
 	public void run(){
 		while (running){
 			if (state == GAME){
-				ad.run();
-				ba.run();
+				CharacterManager.run();
+				LivingEntityManager.run();
 				fpsSetter();
 				repaint();
 			}
@@ -661,9 +661,9 @@ public class ac extends JPanel implements Runnable {
 				repaint();
 			}
 			/*if (hovering)
-				aa.f.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				WindowManager.f.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			else
-				aa.f.setCursor(Cursor.getDefaultCursor());*/
+				WindowManager.f.setCursor(Cursor.getDefaultCursor());*/
 		}
 	}
 
@@ -672,7 +672,7 @@ public class ac extends JPanel implements Runnable {
 		int textOffset = 27;
 		Point mousePos = new Point(0, 0);
 		try {
-			mousePos = new Point(aa.f.getMousePosition().x, aa.f.getMousePosition().y - 24);
+			mousePos = new Point(WindowManager.f.getMousePosition().x, WindowManager.f.getMousePosition().y - 24);
 		}
 		catch (NullPointerException ex){}
 		g.setColor(def);
