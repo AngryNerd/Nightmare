@@ -20,6 +20,7 @@ import java.awt.image.RasterOp;
 import java.awt.image.RescaleOp;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -287,11 +288,25 @@ public class GameManager extends JPanel implements Runnable {
 	public void playMusic(){
 		try {
 			Clip clip = AudioSystem.getClip();
-			InputStream is = GameManager.class.getResourceAsStream("/sounds/music.wav");
+			InputStream is = new URL("http://amigocraft.net/audio/nightmare_music.wav").openStream();
 			BufferedInputStream bIs = new BufferedInputStream(is);
 			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+		}
+	}
+
+	public static void playSound(String path){
+		try {
+			Clip clip = AudioSystem.getClip();
+			InputStream is = GameManager.class.getResourceAsStream(path);
+			BufferedInputStream bIs = new BufferedInputStream(is);
+			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
+			clip.open(aIs);
+			clip.start();
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
@@ -358,20 +373,6 @@ public class GameManager extends JPanel implements Runnable {
 		}
 		CharacterManager.centerX = WindowManager.width / 2 + CharacterManager.xs;
 		CharacterManager.centerY = WindowManager.width / 2 + CharacterManager.ys;
-	}
-
-	public static void playSound(String path){
-		try {
-			Clip clip = AudioSystem.getClip();
-			InputStream is = GameManager.class.getResourceAsStream(path);
-			BufferedInputStream bIs = new BufferedInputStream(is);
-			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
-			clip.open(aIs);
-			clip.start();
-		}
-		catch (Exception ex){
-			ex.printStackTrace();
-		}
 	}
 
 	public static void colorFloors(Graphics g, Rectangle f){
