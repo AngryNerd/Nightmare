@@ -363,7 +363,7 @@ public class ac extends JPanel implements Runnable {
 	public static void playSound(String path){
 		try {
 			Clip clip = AudioSystem.getClip();
-			InputStream is = ac.class.getResourceAsStream("/sounds/coin.wav");
+			InputStream is = ac.class.getResourceAsStream(path);
 			BufferedInputStream bIs = new BufferedInputStream(is);
 			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
@@ -495,10 +495,9 @@ public class ac extends JPanel implements Runnable {
 			}
 
 			// coins
+			List<Entity> drawEntities = new ArrayList<Entity>();
 			for (Entity e : Entity.entities){
-				if (e.getType().equals("coin")){
-					g.drawImage(Entity.coinSprites.get(Entity.aniFrame), e.getX() - ad.xs, e.getY() - ad.ys, this);
-				}
+				drawEntities.add(e);
 				if (state == GAME){
 					if (Entity.aniTick < Entity.aniDelay)
 						Entity.aniTick += 1;
@@ -510,6 +509,11 @@ public class ac extends JPanel implements Runnable {
 							Entity.aniFrame = 0;
 					}
 				}
+			}
+			
+			for (Entity e : drawEntities){
+				if (e.getType().equals("coin"))
+					g.drawImage(Entity.coinSprites.get(Entity.aniFrame), e.getX() - ad.xs, e.getY() - ad.ys, this);
 			}
 
 			// level end

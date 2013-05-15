@@ -152,6 +152,7 @@ public class ba extends JPanel {
 
 			if (new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight()).intersects(ad.character)){
 				if (!ad.invincible){
+					ac.playSound("/sounds/hurt.wav");
 					ad.health -= 3;
 					if (e.getX() + e.getWidth() / 2 > ad.character.x + ad.characterWidth / 2)
 						ad.knockback = LEFT;
