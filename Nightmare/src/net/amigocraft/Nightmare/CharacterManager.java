@@ -349,7 +349,7 @@ public class CharacterManager {
 
 		// check if character intersects coins
 		List<Entity> destroyEntities = new ArrayList<Entity>();
-		for (Entity e : Entity.entities){
+		for (Entity e : EntityManager.entities){
 			if (e.checkPlayerIntersect() && e.getType().equals("coin")){
 				if (GameManager.superCoins)
 					GameManager.score += GameManager.coinValue * 10;

@@ -303,8 +303,8 @@ public class GameManager extends JPanel implements Runnable {
 		CharacterManager.character = CharacterManager.defineChar();
 		PlatformManager.defineFloors(level);
 		LivingEntityManager.defineEnemies(level);
-		Entity.initialize();
-		Entity.setupEntities();
+		EntityManager.initialize();
+		EntityManager.setupEntities();
 
 		// define star locations
 		for (int i = 0; i < CharacterManager.starNumber; i++){
@@ -496,14 +496,14 @@ public class GameManager extends JPanel implements Runnable {
 
 			// coins
 			List<Entity> drawEntities = new ArrayList<Entity>();
-			for (Entity e : Entity.entities){
+			for (Entity e : EntityManager.entities){
 				drawEntities.add(e);
 				if (state == GAME){
 					if (Entity.aniTick < Entity.aniDelay)
 						Entity.aniTick += 1;
 					else {
 						Entity.aniTick = 0;
-						if (Entity.aniFrame < Entity.coinSprites.size() - 1)
+						if (Entity.aniFrame < EntityManager.coinSprites.size() - 1)
 							Entity.aniFrame += 1;
 						else
 							Entity.aniFrame = 0;
@@ -513,7 +513,7 @@ public class GameManager extends JPanel implements Runnable {
 			
 			for (Entity e : drawEntities){
 				if (e.getType().equals("coin"))
-					g.drawImage(Entity.coinSprites.get(Entity.aniFrame), e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
+					g.drawImage(EntityManager.coinSprites.get(Entity.aniFrame), e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
 			}
 
 			// level end
@@ -538,7 +538,7 @@ public class GameManager extends JPanel implements Runnable {
 			}
 
 			// score
-			g.drawImage(Entity.coinSprites.get(0), WindowManager.width - 125, 5, null);
+			g.drawImage(EntityManager.coinSprites.get(0), WindowManager.width - 125, 5, null);
 			g.setColor(Color.WHITE);
 			g.setFont(btnFont);
 			g.drawString(Integer.toString(score), WindowManager.width - 85, 27);

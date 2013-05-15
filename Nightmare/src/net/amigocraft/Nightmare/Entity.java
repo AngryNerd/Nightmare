@@ -1,11 +1,6 @@
 package net.amigocraft.Nightmare;
 
-import java.awt.Image;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.imageio.ImageIO;
 
 public class Entity {
 	
@@ -20,10 +15,6 @@ public class Entity {
 	public static int aniTick = 0;
 	public static int aniDelay = 75;
 	
-	public static List<Image> coinSprites = new ArrayList<Image>();
-	
-	public static List<Entity> entities = new ArrayList<Entity>();
-	
 	public Entity(int x, int y, int width, int height, String type, int level){
 		this.x = x;
 		this.y = y;
@@ -31,17 +22,17 @@ public class Entity {
 		this.height = height;
 		this.type = type;
 		this.level = level;
-		entities.add(this);
+		EntityManager.entities.add(this);
 	}
 	
 	public Entity(int x, int y, String type, int level){
 		this.x = x;
 		this.y = y;
-		this.width = coinSprites.get(0).getWidth(null);
-		this.height = coinSprites.get(0).getHeight(null);
+		this.width = EntityManager.coinSprites.get(0).getWidth(null);
+		this.height = EntityManager.coinSprites.get(0).getHeight(null);
 		this.type = type;
 		this.level = level;
-		entities.add(this);
+		EntityManager.entities.add(this);
 	}
 	
 	public int getX(){
@@ -93,7 +84,7 @@ public class Entity {
 	}
 	
 	public void destroy(){
-		entities.remove(this);
+		EntityManager.entities.remove(this);
 	}
 	
 	public boolean checkPlayerIntersect(){
@@ -101,28 +92,5 @@ public class Entity {
 		if (r.intersects(CharacterManager.character))
 			return true;
 		return false;
-	}
-	
-	public static void initialize(){
-		try {
-			coinSprites.clear();
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin1.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin2.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin3.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin4.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin5.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin6.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin7.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin8.png")));
-		}
-		catch (Exception ex){
-			ex.printStackTrace();
-		}
-	}
-	
-	public static void setupEntities(){
-		new Entity(150, PlatformManager.floors.get(0).y - PlatformManager.floorHeight - 10, "coin", 1);
-		new Entity(200, PlatformManager.floors.get(0).y - PlatformManager.floorHeight - 10, "coin", 1);
-		new Entity(250, PlatformManager.floors.get(0).y - PlatformManager.floorHeight - 10, "coin", 1);
 	}
 }
