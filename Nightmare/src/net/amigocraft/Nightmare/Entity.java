@@ -11,9 +11,9 @@ public class Entity {
 	private String type;
 	private int level;
 	
-	public static int aniFrame = 0;
-	public static int aniTick = 0;
-	public static int aniDelay = 75;
+	public int aniFrame = 0;
+	public int aniTick = 0;
+	public int aniDelay = 75;
 	
 	public Entity(int x, int y, int width, int height, String type, int level){
 		this.x = x;
@@ -32,6 +32,16 @@ public class Entity {
 		this.height = EntityManager.coinSprites.get(0).getHeight(null);
 		this.type = type;
 		this.level = level;
+		EntityManager.entities.add(this);
+	}
+	
+	public Entity(int x, int y, String type){
+		this.x = x;
+		this.y = y;
+		this.width = EntityManager.coinSprites.get(0).getWidth(null);
+		this.height = EntityManager.coinSprites.get(0).getHeight(null);
+		this.type = type;
+		this.level = -1;
 		EntityManager.entities.add(this);
 	}
 	

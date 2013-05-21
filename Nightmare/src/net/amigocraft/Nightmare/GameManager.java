@@ -19,14 +19,18 @@ import java.awt.image.Raster;
 import java.awt.image.RasterOp;
 import java.awt.image.RescaleOp;
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 
 public class GameManager extends JPanel implements Runnable {
@@ -65,6 +69,10 @@ public class GameManager extends JPanel implements Runnable {
 	Rectangle repBtn = lcBtn;
 	Rectangle endBtn = lbBtn;
 
+	// define level creator buttons
+	Rectangle newBtn = playBtn;
+	Rectangle loadBtn = lcBtn;
+
 	// define pause menu buttons
 	Rectangle resBtn = new Rectangle(WindowManager.width / 2 - 80, 150, 160, 40);
 	Rectangle restartBtn = new Rectangle(WindowManager.width / 2 - 80, 220, 160, 40);
@@ -89,9 +97,13 @@ public class GameManager extends JPanel implements Runnable {
 	Font titleFont = new Font("Verdana", Font.BOLD, 50);
 	Font btnFont = new Font("Verdana", Font.BOLD, 15);
 
+	public static FrameManager f;
+
 	public Thread game;
 
 	public GameManager(FrameManager f){
+
+		GameManager.f = f;
 
 		// Key Listener
 		f.addKeyListener(new KeyAdapter(){
@@ -179,11 +191,11 @@ public class GameManager extends JPanel implements Runnable {
 						CharacterManager.lastDir = 1;
 					}
 				}
-				
+
 				if (e.getKeyCode() == CharacterManager.keyJump || e.getKeyCode() == CharacterManager.keyJump2 || e.getKeyCode() == CharacterManager.keyJump3){
 					CharacterManager.flyUp = false;
 				}
-				
+
 				if (e.getKeyCode() == CharacterManager.keyFall || e.getKeyCode() == CharacterManager.keyFall2){
 					CharacterManager.flyDown = false;
 				}
@@ -195,79 +207,90 @@ public class GameManager extends JPanel implements Runnable {
 		f.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e){
 				if (e.getButton() == 1){
-					Point mousePos = new Point(WindowManager.f.getMousePosition().x, WindowManager.f.getMousePosition().y - 24);
-					if (state != GAME){
-						if (state == MENU){
-							if (playBtn.contains(mousePos)){
-								state = GAME;
-								level = 1;
-								CharacterManager.invincible = true;
-							}
-							else if (quitBtn.contains(mousePos)){
-								WindowManager.pullThePlug();
-							}
-						}
-						else if (state == PAUSED){
-							if (resBtn.contains(mousePos)){
-								state = GAME;
-							}
-							else if (restartBtn.contains(mousePos)){
-								CharacterManager.lives = CharacterManager.prevLives;
-								state = GAME;
-								resetLevel();
-							}
-							else if (pauseQuitBtn.contains(mousePos)){
-								state = MENU;
-							}
-						}
-						else if (state == LEVEL_MENU){
-							if (nextBtn.contains(mousePos)){
-								CharacterManager.prevLives = CharacterManager.lives;
-								level += 1;
-								resetLevel();
-								state = GAME;
-							}
-							else if (repBtn.contains(mousePos)){
-								CharacterManager.lives = CharacterManager.prevLives;
-								resetLevel();
-								state = GAME;
-							}
-							else if (endBtn.contains(mousePos)){
-								state = MENU;
-							}
-						}
-						else if (state == KONAMI){
-							if (moonJumpBox.contains(mousePos)){
-								if (moonJump)
-									moonJump = false;
-								else
-									moonJump = true;
-							}
-							else if (flyBox.contains(mousePos)){
-								if (fly)
-									fly = false;
-								else
-									fly = true;
-							}
-							else if (infLivesBox.contains(mousePos)){
-								if (infLives)
-									infLives = false;
-								else
-									infLives = true;
-							}
-							else if (superCoinsBox.contains(mousePos)){
-								if (superCoins)
-									superCoins = false;
-								else
-									superCoins = true;
-							}
-							else if (invBox.contains(mousePos)){
-								if (inv){
-									inv = false;
-									CharacterManager.invincible = false;
+					if (WindowManager.f.getMousePosition() != null){
+						Point mousePos = new Point(WindowManager.f.getMousePosition().x, WindowManager.f.getMousePosition().y - 24);
+						if (state != GAME){
+							if (state == MENU){
+								if (playBtn.contains(mousePos)){
+									state = GAME;
+									level = 1;
+									CharacterManager.invincible = true;
 								}
-								else
-									inv = true;
+								else if (quitBtn.contains(mousePos))
+									WindowManager.pullThePlug();
+
+								//else if (lcBtn.contains(mousePos))
+								//	state = LC_MENU;
+							}
+							else if (state == PAUSED){
+								if (resBtn.contains(mousePos)){
+									state = GAME;
+								}
+								else if (restartBtn.contains(mousePos)){
+									CharacterManager.lives = CharacterManager.prevLives;
+									state = GAME;
+									resetLevel();
+								}
+								else if (pauseQuitBtn.contains(mousePos)){
+									state = MENU;
+								}
+							}
+							else if (state == LEVEL_MENU){
+								if (nextBtn.contains(mousePos)){
+									CharacterManager.prevLives = CharacterManager.lives;
+									level += 1;
+									resetLevel();
+									state = GAME;
+								}
+								else if (repBtn.contains(mousePos)){
+									CharacterManager.lives = CharacterManager.prevLives;
+									resetLevel();
+									state = GAME;
+								}
+								else if (endBtn.contains(mousePos)){
+									state = MENU;
+								}
+							}
+							else if (state == KONAMI){
+								if (moonJumpBox.contains(mousePos)){
+									if (moonJump)
+										moonJump = false;
+									else
+										moonJump = true;
+								}
+								else if (flyBox.contains(mousePos)){
+									if (fly)
+										fly = false;
+									else
+										fly = true;
+								}
+								else if (infLivesBox.contains(mousePos)){
+									if (infLives)
+										infLives = false;
+									else
+										infLives = true;
+								}
+								else if (superCoinsBox.contains(mousePos)){
+									if (superCoins)
+										superCoins = false;
+									else
+										superCoins = true;
+								}
+								else if (invBox.contains(mousePos)){
+									if (inv){
+										inv = false;
+										CharacterManager.invincible = false;
+									}
+									else
+										inv = true;
+								}
+							}
+							else if (state == LC_MENU){
+								if (newBtn.contains(mousePos)){
+									state = LEVEL_CREATOR;
+								}
+								//else if (loadBtn.contains(mousePos))
+								//state = LEVEL_CREATOR;
 							}
 						}
 					}
@@ -294,8 +317,20 @@ public class GameManager extends JPanel implements Runnable {
 			clip.open(aIs);
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 		}
-		catch (Exception ex){
+		catch (UnknownHostException ex){
+			System.err.println("Failed to retrieve audio from online host due to UnknownHostException. Either I forgot to renew my site's domain, or you don't have an Internet connection.");
+		}
+		catch (UnsupportedAudioFileException ex){
 			ex.printStackTrace();
+			System.err.println("Failed to retrieve audio from online host due to UnsupportedAudioFileException. Perhaps the download was improperly executed?");
+		}
+		catch (IOException ex){
+			ex.printStackTrace();
+			System.err.println("Failed to retrieve audio from online host due to IOException. Perhaps the download was interrupted?");
+		}
+		catch (LineUnavailableException ex){
+			ex.printStackTrace();
+			System.err.println("Failed to retrieve audio from online host due to LineUnavailableException.");
 		}
 	}
 
@@ -448,7 +483,7 @@ public class GameManager extends JPanel implements Runnable {
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		
+
 		if (inv)
 			CharacterManager.invincible = true;
 
@@ -471,8 +506,8 @@ public class GameManager extends JPanel implements Runnable {
 			if (CharacterManager.invincible && !inv){
 				RasterOp rOp = new RescaleOp(new float[] {1.0f, 1.0f, 1.0f, 0.4f},
 						new float[] {0.0f, 0.0f, 0.0f, 0.0f}, null);
-			    Raster r = rOp.filter(bi.getData(), null);
-			    bi.setData(r);
+				Raster r = rOp.filter(bi.getData(), null);
+				bi.setData(r);
 			}
 			g.drawImage(bi, CharacterManager.character.x - CharacterManager.xs, CharacterManager.character.y - CharacterManager.ys, this);
 
@@ -500,21 +535,21 @@ public class GameManager extends JPanel implements Runnable {
 			for (Entity e : EntityManager.entities){
 				drawEntities.add(e);
 				if (state == GAME){
-					if (Entity.aniTick < Entity.aniDelay)
-						Entity.aniTick += 1;
+					if (e.aniTick < e.aniDelay)
+						e.aniTick += 1;
 					else {
-						Entity.aniTick = 0;
-						if (Entity.aniFrame < EntityManager.coinSprites.size() - 1)
-							Entity.aniFrame += 1;
+						e.aniTick = 0;
+						if (e.aniFrame < EntityManager.coinSprites.size() - 1)
+							e.aniFrame += 1;
 						else
-							Entity.aniFrame = 0;
+							e.aniFrame = 0;
 					}
 				}
 			}
-			
+
 			for (Entity e : drawEntities){
 				if (e.getType().equals("coin"))
-					g.drawImage(EntityManager.coinSprites.get(Entity.aniFrame), e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
+					g.drawImage(EntityManager.coinSprites.get(e.aniFrame), e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
 			}
 
 			// level end
@@ -618,6 +653,20 @@ public class GameManager extends JPanel implements Runnable {
 			createButton(g, repBtn, defColor, hoverColor, "Replay Level", textColor);
 			createButton(g, endBtn, defColor, hoverColor, "End Game", textColor);
 		}
+		else if (state == LC_MENU){
+
+			Color hoverColor = Color.YELLOW;
+			Color defColor = new Color(0xBBBBBB);
+			Color textColor = new Color(0x660000);
+
+			createButton(g, newBtn, defColor, hoverColor, "New Level", textColor);
+			createButton(g, loadBtn, defColor, hoverColor, "Load Level", textColor, true);
+
+		}
+		else if (state == LEVEL_CREATOR){
+			LevelDesigner.checkClick();
+			LevelDesigner.drawObjects(g);
+		}
 
 		// draw the pause menu
 		if (state == PAUSED){
@@ -640,27 +689,13 @@ public class GameManager extends JPanel implements Runnable {
 	public void run(){
 		while (running){
 			if (state == GAME){
-				CharacterManager.run();
-				LivingEntityManager.run();
-				fpsSetter();
-				repaint();
+				CharacterManager.manage();
+				LivingEntityManager.manage();
 			}
-			else if (state == MENU){
-				fpsSetter();
-				repaint();
-			}
-			else if (state == PAUSED){
-				fpsSetter();
-				repaint();
-			}
-			else if (state == LEVEL_MENU){
-				fpsSetter();
-				repaint();
-			}
-			else if (state == KONAMI){
-				fpsSetter();
-				repaint();
-			}
+
+			fpsSetter();
+			repaint();
+
 			/*if (hovering)
 				WindowManager.f.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			else

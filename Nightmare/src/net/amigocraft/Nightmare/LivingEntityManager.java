@@ -62,7 +62,7 @@ public class LivingEntityManager extends JPanel {
 		enemies.add(new Enemy(type, level, enemySprites.get(type), enemySpritesF.get(type), new int[]{x - (enemyDim.get(type)[0] / 2), y - (enemyDim.get(type)[1])}, LEFT, enemyDim.get(type)));
 	}
 
-	public static void run(){
+	public static void manage(){
 
 		// Feet
 		for (Enemy e : enemies){

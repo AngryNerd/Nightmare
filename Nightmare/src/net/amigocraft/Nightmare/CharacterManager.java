@@ -115,7 +115,7 @@ public class CharacterManager {
 		return character = new Rectangle((WindowManager.width / 2) - (characterWidth / 2), (WindowManager.height / 2) - (characterHeight / 2), characterWidth, characterHeight);
 	}
 
-	public static void run(){
+	public static void manage(){
 		Point foot1 = new Point(character.x, character.y + character.height);
 		Point foot2 = new Point(character.x + character.width, character.y + character.height);
 
