@@ -220,7 +220,7 @@ public class GameManager extends JPanel implements Runnable {
 									WindowManager.pullThePlug();
 
 								//else if (lcBtn.contains(mousePos))
-								//	state = LC_MENU;
+								//	state = LC_SELECT;
 							}
 							else if (state == PAUSED){
 								if (resBtn.contains(mousePos)){
@@ -285,7 +285,7 @@ public class GameManager extends JPanel implements Runnable {
 										inv = true;
 								}
 							}
-							else if (state == LC_MENU){
+							else if (state == LC_SELECT){
 								if (newBtn.contains(mousePos)){
 									state = LEVEL_CREATOR;
 								}
@@ -653,7 +653,7 @@ public class GameManager extends JPanel implements Runnable {
 			createButton(g, repBtn, defColor, hoverColor, "Replay Level", textColor);
 			createButton(g, endBtn, defColor, hoverColor, "End Game", textColor);
 		}
-		else if (state == LC_MENU){
+		else if (state == LC_SELECT){
 
 			Color hoverColor = Color.YELLOW;
 			Color defColor = new Color(0xBBBBBB);

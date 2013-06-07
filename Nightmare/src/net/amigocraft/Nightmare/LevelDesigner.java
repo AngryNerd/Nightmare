@@ -62,16 +62,16 @@ public class LevelDesigner {
 			}
 			if (!drag){
 				for (Rectangle r : platforms){
-					if (r.contains(mousePos)){
-						offset = new int[]{mousePos.x - (int)r.getX(), mousePos.y - (int)r.getY()};
+					if (new Rectangle(r.x - xs, r.y - ys, r.width, r.height).contains(mousePos)){
+						offset = new int[]{mousePos.x - r.x + xs, mousePos.y - r.y + ys};
 						selectedPlatform = r;
 						drag = true;
 						break;
 					}
 				}
 				for (Entity e : entities){
-					if (new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight()).contains(mousePos)){
-						offset = new int[]{mousePos.x - e.getX(), mousePos.y - e.getY()};
+					if (new Rectangle(e.getX() - xs, e.getY() - ys, e.getWidth(), e.getHeight()).contains(mousePos)){
+						offset = new int[]{mousePos.x - e.getX() + xs, mousePos.y - e.getY() + ys};
 						selectedEntity = e;
 						drag = true;
 						break;
@@ -82,14 +82,14 @@ public class LevelDesigner {
 			if (drag && (selectedPlatform != null || selectedEntity != null)){
 				if (selectedPlatform != null){
 					platforms.remove(selectedPlatform);
-					selectedPlatform = new Rectangle(mousePos.x - offset[0], mousePos.y - offset[1],
+					selectedPlatform = new Rectangle(mousePos.x - offset[0] + xs, mousePos.y - offset[1] + ys,
 							selectedPlatform.width, selectedPlatform.height);
 					platforms.add(selectedPlatform);
 				}
 				else if (selectedEntity != null){
 					entities.remove(selectedEntity);
-					selectedEntity.setX(mousePos.x - offset[0]);
-					selectedEntity.setY(mousePos.y - offset[1]);
+					selectedEntity.setX(mousePos.x - offset[0] + xs);
+					selectedEntity.setY(mousePos.y - offset[1] + ys);
 					entities.add(selectedEntity);
 				}
 			}
@@ -141,14 +141,16 @@ public class LevelDesigner {
 
 		// draw dynamic objects
 		for (Rectangle p : platforms)
-			g.fillRect(p.x + xs, p.y + ys, p.width, p.height);
+			g.fillRect(p.x - xs, p.y - ys, p.width, p.height);
 		for (Entity e : entities)
-			g.drawImage(LivingEntityManager.enemySprites.get(e.getType()).get(e.aniFrame), e.getX() + xs, e.getY() + ys, null);
+			g.drawImage(LivingEntityManager.enemySprites.get(e.getType()).get(e.aniFrame),
+					e.getX() - xs, e.getY() - ys, null);
 
 		// draw static objects (spawns)
 		g.fillRect(platformSpawn.x, platformSpawn.y, platformSpawn.width, platformSpawn.height);
 		for (EntitySpawn es : EntitySpawn.spawns)
-			g.drawImage(LivingEntityManager.enemySprites.get(es.getEntity().getType()).get(0), es.getX(), es.getY(), null);
+			g.drawImage(LivingEntityManager.enemySprites.get(es.getEntity().getType()).get(0),
+					es.getX(), es.getY(), null);
 		g.setColor(Color.WHITE);
 		g.drawRect(hotbar.x, hotbar.y, hotbar.width, hotbar.height);
 	}
