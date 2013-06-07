@@ -1,6 +1,8 @@
 package net.amigocraft.Nightmare;
 
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.util.List;
 
 public class Entity {
 	
@@ -10,18 +12,22 @@ public class Entity {
 	private int height;
 	private String type;
 	private int level;
+	private List<Image> sprites;
+	private List<Image> spritesF;
 	
 	public int aniFrame = 0;
 	public int aniTick = 0;
 	public int aniDelay = 75;
 	
-	public Entity(int x, int y, int width, int height, String type, int level){
+	public Entity(int x, int y, int width, int height, String type, int level, List<Image> sprites, List<Image> spritesF){
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 		this.type = type;
 		this.level = level;
+		this.sprites = sprites;
+		this.spritesF = spritesF;
 		EntityManager.entities.add(this);
 	}
 	
@@ -69,6 +75,14 @@ public class Entity {
 		return level;
 	}
 	
+	public List<Image> getSprites(){
+		return sprites;
+	}
+	
+	public List<Image> getSpritesF(){
+		return spritesF;
+	}
+	
 	public void setX(int x){
 		this.x = x;
 	}
@@ -91,6 +105,14 @@ public class Entity {
 	
 	public void setLevel(int level){
 		this.level = level;
+	}
+	
+	public void setSprites(List<Image> sprites){
+		this.sprites = sprites;
+	}
+	
+	public void setSpritesF(List<Image> spritesF){
+		this.spritesF = spritesF;
 	}
 	
 	public void destroy(){
