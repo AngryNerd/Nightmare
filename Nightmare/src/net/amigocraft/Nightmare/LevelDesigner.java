@@ -98,7 +98,7 @@ public class LevelDesigner {
 
 	public static boolean generateFile(File file){
 		if (file.exists()){
-			//TODO: Prompt user to overwrite
+			GameManager.state = State.LC_OW;
 		}
 		try {
 			file.createNewFile();
@@ -208,6 +208,14 @@ public class LevelDesigner {
 						),
 						x, y
 				);
+	}
+	
+	public static void chooseLoad(){
+		//TODO: Open system load dialogue
+	}
+	
+	public static void chooseSave(){
+		//TODO: Open system save dialogue
 	}
 
 }

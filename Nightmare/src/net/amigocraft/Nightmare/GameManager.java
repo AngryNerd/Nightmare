@@ -72,6 +72,12 @@ public class GameManager extends JPanel implements Runnable {
 	// define level creator buttons
 	Rectangle newBtn = playBtn;
 	Rectangle loadBtn = lcBtn;
+	Rectangle lcResBtn = playBtn;
+	Rectangle lcSaveBtn = lcBtn;
+	Rectangle lcQuitBtn = lbBtn;
+	Rectangle lcYesBtn = playBtn;
+	Rectangle lcNoBtn = lcBtn;
+	Rectangle lcCancelBtn = lbBtn;
 
 	// define pause menu buttons
 	Rectangle resBtn = new Rectangle(WindowManager.width / 2 - 80, 150, 160, 40);
@@ -137,15 +143,18 @@ public class GameManager extends JPanel implements Runnable {
 					}
 				}
 				else if (e.getKeyCode() == CharacterManager.keyPause){
-					if (state == GAME){
+					if (state == GAME)
 						state = PAUSED;
-					}
-					else if (state == PAUSED){
+					else if (state == PAUSED)
 						state = GAME;
-					}
-					else if (state == KONAMI){
+					else if (state == KONAMI)
 						state = GAME;
-					}
+					else if (state == LEVEL_CREATOR)
+						state = LC_MENU;
+					else if (state == LC_MENU)
+						state = LEVEL_CREATOR;
+					else if (state == LEVEL_CREATOR)
+						state = LC_MENU;
 				}
 
 				// Konami
@@ -219,8 +228,8 @@ public class GameManager extends JPanel implements Runnable {
 								else if (quitBtn.contains(mousePos))
 									WindowManager.pullThePlug();
 
-								//else if (lcBtn.contains(mousePos))
-								//	state = LC_SELECT;
+								else if (lcBtn.contains(mousePos))
+									state = LC_SELECT;
 							}
 							else if (state == PAUSED){
 								if (resBtn.contains(mousePos)){
@@ -286,11 +295,33 @@ public class GameManager extends JPanel implements Runnable {
 								}
 							}
 							else if (state == LC_SELECT){
-								if (newBtn.contains(mousePos)){
+								if (newBtn.contains(mousePos))
 									state = LEVEL_CREATOR;
-								}
 								//else if (loadBtn.contains(mousePos))
 								//state = LEVEL_CREATOR;
+							}
+							else if (state == LC_MENU){
+								if (lcResBtn.contains(mousePos))
+									state = LEVEL_CREATOR;
+								else if (lcSaveBtn.contains(mousePos)){
+									LevelDesigner.chooseSave();
+								}
+								else if (lcQuitBtn.contains(mousePos))
+									state = LC_CONFIRM;
+							}
+							else if (state == LC_CONFIRM){
+								if (lcYesBtn.contains(mousePos))
+									state = MENU;
+								else if (lcNoBtn.contains(mousePos))
+									state = LC_MENU;
+							}
+							else if (state == LC_OW){
+								if (lcYesBtn.contains(mousePos))
+									LevelDesigner.chooseLoad();
+								else if (lcNoBtn.contains(mousePos))
+									LevelDesigner.chooseSave();
+								else if (lcCancelBtn.contains(mousePos))
+									state = MENU;
 							}
 						}
 					}
@@ -484,6 +515,10 @@ public class GameManager extends JPanel implements Runnable {
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 
+		Color hoverColor = Color.YELLOW;
+		Color defColor = new Color(0xBBBBBB);
+		Color textColor = new Color(0x660000);
+
 		if (inv)
 			CharacterManager.invincible = true;
 
@@ -627,20 +662,13 @@ public class GameManager extends JPanel implements Runnable {
 			g.drawString("NIGHTMARE", centerText(g, "NIGHTMARE"), 100);
 
 			// draw the buttons
-			Color hoverColor = Color.YELLOW;
-			Color defColor = new Color(0xBBBBBB);
-			Color textColor = new Color(0x660000);
 
 			createButton(g, playBtn, defColor, hoverColor, "Go to Sleep", textColor);
-			createButton(g, lcBtn, defColor, hoverColor, "Level Creator", textColor, true);
+			createButton(g, lcBtn, defColor, hoverColor, "Level Creator", textColor);
 			createButton(g, lbBtn, defColor, hoverColor, "Leaderboard", textColor, true);
 			createButton(g, quitBtn, defColor, hoverColor, "Exit Game", textColor);
 		}
 		else if (state == LEVEL_MENU){
-
-			Color hoverColor = Color.YELLOW;
-			Color defColor = new Color(0xBBBBBB);
-			Color textColor = new Color(0x660000);
 
 			g.setColor(textColor);
 			g.setFont(font);
@@ -655,10 +683,6 @@ public class GameManager extends JPanel implements Runnable {
 		}
 		else if (state == LC_SELECT){
 
-			Color hoverColor = Color.YELLOW;
-			Color defColor = new Color(0xBBBBBB);
-			Color textColor = new Color(0x660000);
-
 			createButton(g, newBtn, defColor, hoverColor, "New Level", textColor);
 			createButton(g, loadBtn, defColor, hoverColor, "Load Level", textColor, true);
 
@@ -669,12 +693,34 @@ public class GameManager extends JPanel implements Runnable {
 			//LevelDesigner.checkClick();
 			LevelDesigner.drawObjects(g);
 		}
+		
+		else if (state == LC_MENU){
+			createButton(g, lcResBtn, defColor, hoverColor, "Resume Editing", textColor);
+			createButton(g, lcSaveBtn, defColor, hoverColor, "Save Level", textColor, true);
+			createButton(g, lcQuitBtn, defColor, hoverColor, "Quit Editor", textColor);
+		}
+		
+		else if (state == LC_OW){
+			g.setColor(PlatformManager.floorColor);
+			g.setFont(new Font("Verdana", Font.BOLD, 20));
+			String s = "Do you wish to overwrite this file?";
+			g.drawString(s, centerText(g, s), 100);
+			createButton(g, lcYesBtn, defColor, hoverColor, "Overwrite", textColor);
+			createButton(g, lcNoBtn, defColor, hoverColor, "Choose Another", textColor);
+			createButton(g, lcCancelBtn, defColor, hoverColor, "Cancel", textColor);
+		}
+		
+		else if (state == LC_CONFIRM){
+			g.setColor(PlatformManager.floorColor);
+			g.setFont(new Font("Verdana", Font.BOLD, 20));
+			String s = "Do you wish to quit the editor? Any unsaved work will be lost.";
+			g.drawString(s, centerText(g, s), 100);
+			createButton(g, lcYesBtn, defColor, hoverColor, "Yes", textColor);
+			createButton(g, lcNoBtn, defColor, hoverColor, "No", textColor);
+		}
 
 		// draw the pause menu
-		if (state == PAUSED){
-			Color hoverColor = Color.YELLOW;
-			Color defColor = new Color(0xBBBBBB);
-			Color textColor = new Color(0x660000);
+		else if (state == PAUSED){
 
 			// draw buttons
 			createButton(g, resBtn, defColor, hoverColor, "Resume Nightmare", textColor);
