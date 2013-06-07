@@ -1,6 +1,7 @@
 /** PLATFORMS **/
 package net.amigocraft.Nightmare;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class PlatformManager extends JPanel {
 	public static int floorHeight = 20;
 	public static int centerX = CharacterManager.centerX;
 	public static int centerY = CharacterManager.centerY;
+	public static Color floorColor = new Color(0x6600000);
 
 	public static boolean objectsDefined = false;
 

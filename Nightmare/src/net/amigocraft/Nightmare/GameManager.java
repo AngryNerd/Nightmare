@@ -205,7 +205,7 @@ public class GameManager extends JPanel implements Runnable {
 
 		// mouse listener
 		f.addMouseListener(new MouseAdapter(){
-			public void mouseClicked(MouseEvent e){
+			public void mousePressed(MouseEvent e){
 				if (e.getButton() == 1){
 					if (WindowManager.f.getMousePosition() != null){
 						Point mousePos = new Point(WindowManager.f.getMousePosition().x, WindowManager.f.getMousePosition().y - 24);
@@ -411,7 +411,7 @@ public class GameManager extends JPanel implements Runnable {
 	}
 
 	public static void colorFloors(Graphics g, Rectangle f){
-		g.setColor(new Color(0x6600000));
+		g.setColor(PlatformManager.floorColor);
 		try {
 			g.fillRect(f.x - CharacterManager.xs, f.y - CharacterManager.ys, f.width, f.height);
 		}
@@ -664,7 +664,9 @@ public class GameManager extends JPanel implements Runnable {
 
 		}
 		else if (state == LEVEL_CREATOR){
-			LevelDesigner.checkClick();
+			if (!LevelDesigner.initialized)
+				LevelDesigner.initialize();
+			//LevelDesigner.checkClick();
 			LevelDesigner.drawObjects(g);
 		}
 

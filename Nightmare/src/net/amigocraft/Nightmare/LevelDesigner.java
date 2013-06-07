@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LevelDesigner {
+	
+	public static boolean initialized = false;
 
 	public static List<Rectangle> platforms = new ArrayList<Rectangle>();
 	public static List<Entity> entities = new ArrayList<Entity>();
@@ -20,29 +22,37 @@ public class LevelDesigner {
 	public static Entity selectedEntity = null;
 	public static String selectedType = null;
 	public static boolean drag = false;
+	
+	public static int[] offset = new int[2];
 
 	public static Rectangle hotbar = new Rectangle(100, WindowManager.height - 95, WindowManager.width - 200, 75);
-	public static Rectangle platformSpawn = new Rectangle(125, WindowManager.height - 85, 100, 25);
-	public static Rectangle skeletonSpawn = new Rectangle(225, WindowManager.height - 85,
+	public static Rectangle platformSpawn = new Rectangle(125, WindowManager.height - 75, 100, PlatformManager.floorHeight);
+	public static Rectangle skeletonSpawn = new Rectangle(235, WindowManager.height - 85,
 			LivingEntityManager.enemyDim.get("skeleton")[0], LivingEntityManager.enemyDim.get("skeleton")[1]);
 
 	public static void checkMouse(){
 		if (WindowManager.f.getMousePosition() != null){
 			Point mousePos = new Point(WindowManager.f.getMousePosition().x, WindowManager.f.getMousePosition().y - 24);
 			if (platformSpawn.contains(mousePos) && !drag){
-				Rectangle platform = new Rectangle(mousePos.x, mousePos.y, platformSpawn.width, platformSpawn.height);
+				offset = new int[]{mousePos.x - (int)platformSpawn.getX(), mousePos.y - (int)platformSpawn.getY()};
+				Rectangle platform = new Rectangle(mousePos.x - offset[0], mousePos.y - offset[1],
+						platformSpawn.width, platformSpawn.height);
 				platforms.add(platform);
 				selectedPlatform = platform;
 				drag = true;
 			}
 			else if (skeletonSpawn.contains(mousePos) && !drag){
-				entities.add(new Entity(skeletonSpawn.x, skeletonSpawn.x, "skeleton"));
-				selectedEntity = new Entity(skeletonSpawn.x, skeletonSpawn.x, "skeleton");
+				offset = new int[]{mousePos.x - (int)skeletonSpawn.getX(),
+						mousePos.y - (int)skeletonSpawn.getY()};
+				Entity e = new Entity(skeletonSpawn.x - offset[0], skeletonSpawn.x - offset[1], "skeleton");
+				entities.add(e);
+				selectedEntity = e;
 				drag = true;
 			}
 			if (!drag){
 				for (Rectangle r : platforms){
 					if (r.contains(mousePos)){
+						offset = new int[]{mousePos.x - (int)r.getX(), mousePos.y - (int)r.getY()};
 						selectedPlatform = r;
 						drag = true;
 						break;
@@ -50,6 +60,7 @@ public class LevelDesigner {
 				}
 				for (Entity e : entities){
 					if (new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight()).contains(mousePos)){
+						offset = new int[]{mousePos.x - e.getX(), mousePos.y - e.getY()};
 						selectedEntity = e;
 						drag = true;
 						break;
@@ -60,13 +71,14 @@ public class LevelDesigner {
 			if (drag && (selectedPlatform != null || selectedEntity != null)){
 				if (selectedPlatform != null){
 					platforms.remove(selectedPlatform);
-					selectedPlatform = new Rectangle(mousePos.x, mousePos.y, selectedPlatform.width, selectedPlatform.height);
+					selectedPlatform = new Rectangle(mousePos.x - offset[0], mousePos.y - offset[1],
+							selectedPlatform.width, selectedPlatform.height);
 					platforms.add(selectedPlatform);
 				}
 				else if (selectedEntity != null){
 					entities.remove(selectedEntity);
-					selectedEntity.setX(mousePos.x);
-					selectedEntity.setY(mousePos.y);
+					selectedEntity.setX(mousePos.x - offset[0]);
+					selectedEntity.setY(mousePos.y - offset[1]);
 					entities.add(selectedEntity);
 				}
 			}
@@ -105,7 +117,7 @@ public class LevelDesigner {
 			checkMouse();
 		}
 
-		g.setColor(Color.RED);
+		g.setColor(PlatformManager.floorColor);
 
 		// draw dynamic objects
 		for (Rectangle p : platforms)
@@ -119,16 +131,14 @@ public class LevelDesigner {
 		g.setColor(Color.WHITE);
 		g.drawRect(hotbar.x, hotbar.y, hotbar.width, hotbar.height);
 	}
-	public static void checkClick(){
+	public static void initialize(){
 		GameManager.f.addMouseListener(new MouseAdapter(){
-			public void mouseClicked(MouseEvent e){
-				System.out.println("clicked");
+			public void mousePressed(MouseEvent e){
 				if (e.getButton() == 1)
 					checkMouse();
 			}
 
 			public void mouseReleased(MouseEvent e){
-				System.out.println("released");
 				if (e.getButton() == 1){
 					selectedPlatform = null;
 					selectedEntity = null;
@@ -136,6 +146,8 @@ public class LevelDesigner {
 				}
 			}
 		});
+		
+		initialized = true;
 	}
 
 }
