@@ -36,10 +36,10 @@ public class CharacterManager {
 	public static int keyFall = KeyEvent.VK_DOWN;
 	public static int keyLeft = KeyEvent.VK_LEFT;
 	public static int keyRight = KeyEvent.VK_RIGHT;
-	public static int keyJump2 = KeyEvent.VK_SPACE;
+	public static int keyJump2 = KeyEvent.VK_W;
 	public static int keyLeft2 = KeyEvent.VK_A;
 	public static int keyRight2 = KeyEvent.VK_D;
-	public static int keyJump3 = KeyEvent.VK_W;
+	public static int keyJump3 = KeyEvent.VK_SPACE;
 	public static int keyFall2 = KeyEvent.VK_S;
 	public static int keyPause = KeyEvent.VK_ESCAPE;
 	public static int jumpFrame = 0;

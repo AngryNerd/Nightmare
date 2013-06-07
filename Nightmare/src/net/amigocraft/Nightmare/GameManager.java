@@ -219,8 +219,8 @@ public class GameManager extends JPanel implements Runnable {
 								else if (quitBtn.contains(mousePos))
 									WindowManager.pullThePlug();
 
-								//else if (lcBtn.contains(mousePos))
-								//	state = LC_MENU;
+								else if (lcBtn.contains(mousePos))
+									state = LC_MENU;
 							}
 							else if (state == PAUSED){
 								if (resBtn.contains(mousePos)){

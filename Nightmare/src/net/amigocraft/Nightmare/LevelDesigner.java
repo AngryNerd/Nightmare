@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
@@ -22,6 +24,11 @@ public class LevelDesigner {
 	public static Entity selectedEntity = null;
 	public static String selectedType = null;
 	public static boolean drag = false;
+
+	public static int xs = 0;
+	public static int ys = 0;
+	
+	public static boolean left, right, up, down = false;
 
 	public static int[] offset = new int[2];
 
@@ -116,6 +123,15 @@ public class LevelDesigner {
 	}
 
 	public static void drawObjects(Graphics g){
+		
+		if (left)
+			xs -= 1;
+		else if (right)
+			xs += 1;
+		if (up)
+			ys -= 1;
+		else if (down)
+			ys += 1;
 
 		if (drag){
 			checkMouse();
@@ -125,9 +141,9 @@ public class LevelDesigner {
 
 		// draw dynamic objects
 		for (Rectangle p : platforms)
-			g.fillRect(p.x, p.y, p.width, p.height);
+			g.fillRect(p.x + xs, p.y + ys, p.width, p.height);
 		for (Entity e : entities)
-			g.drawImage(LivingEntityManager.enemySprites.get(e.getType()).get(e.aniFrame), e.getX(), e.getY(), null);
+			g.drawImage(LivingEntityManager.enemySprites.get(e.getType()).get(e.aniFrame), e.getX() + xs, e.getY() + ys, null);
 
 		// draw static objects (spawns)
 		g.fillRect(platformSpawn.x, platformSpawn.y, platformSpawn.width, platformSpawn.height);
@@ -151,6 +167,29 @@ public class LevelDesigner {
 				}
 			}
 		});
+		GameManager.f.addKeyListener(new KeyAdapter(){
+			public void keyPressed(KeyEvent e){
+				if (e.getKeyCode() == CharacterManager.keyLeft || e.getKeyCode() == CharacterManager.keyLeft2)
+					left = true;
+				else if (e.getKeyCode() == CharacterManager.keyRight || e.getKeyCode() == CharacterManager.keyRight2)
+					right = true;
+				else if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S)
+					down = true;
+				else if (e.getKeyCode() == CharacterManager.keyJump || e.getKeyCode() == CharacterManager.keyJump2)
+					up = true;
+			}
+			
+			public void keyReleased(KeyEvent e){
+				if (e.getKeyCode() == CharacterManager.keyLeft || e.getKeyCode() == CharacterManager.keyLeft2)
+					left = false;
+				else if (e.getKeyCode() == CharacterManager.keyRight || e.getKeyCode() == CharacterManager.keyRight2)
+					right = false;
+				else if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S)
+					down = false;
+				else if (e.getKeyCode() == CharacterManager.keyJump || e.getKeyCode() == CharacterManager.keyJump2)
+					up = false;
+			}
+		});
 
 		createEnemySpawn("skeleton", 235, WindowManager.height - 85);
 
@@ -164,7 +203,8 @@ public class LevelDesigner {
 						LivingEntityManager.enemyDim.get(type)[0], type, 0,
 						LivingEntityManager.enemySprites.get(type),
 						LivingEntityManager.enemySpritesF.get(type)
-						), x, y
+						),
+						x, y
 				);
 	}
 
