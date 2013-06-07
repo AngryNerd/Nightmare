@@ -39,14 +39,14 @@ public class LivingEntityManager extends JPanel {
 		enemyDim.clear();
 		enemyDim.put("skeleton", new int[]{26, 46});
 		try {
-			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton1.png")));
-			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton2.png")));
-			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton3.png")));
-			skeleton.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/Skeleton4.png")));
-			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF1.png")));
-			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF2.png")));
-			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF3.png")));
-			skeletonF.add(ImageIO.read(CharacterManager.class.getResourceAsStream("/images/SkeletonF4.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/Skeleton1.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/Skeleton2.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/Skeleton3.png")));
+			skeleton.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/Skeleton4.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/SkeletonF1.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/SkeletonF2.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/SkeletonF3.png")));
+			skeletonF.add(ImageIO.read(CharacterManager.class.getClassLoader().getResourceAsStream("images/SkeletonF4.png")));
 			enemySprites.put("skeleton", skeleton);
 			enemySpritesF.put("skeleton", skeletonF);
 		} 

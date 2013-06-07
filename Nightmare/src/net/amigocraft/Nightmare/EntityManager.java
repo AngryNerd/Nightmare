@@ -14,14 +14,14 @@ public class EntityManager {
 	public static void initialize(){
 		try {
 			coinSprites.clear();
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin1.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin2.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin3.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin4.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin5.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin6.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin7.png")));
-			coinSprites.add(ImageIO.read(Entity.class.getResourceAsStream("/images/coin8.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin1.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin2.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin3.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin4.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin5.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin6.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin7.png")));
+			coinSprites.add(ImageIO.read(Entity.class.getClassLoader().getResourceAsStream("images/coin8.png")));
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
