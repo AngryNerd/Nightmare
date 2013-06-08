@@ -49,7 +49,7 @@ public class LevelDesigner {
 
 	public static Rectangle hotbar = new Rectangle(100, WindowManager.height - 95, WindowManager.width - 200, 75);
 	public static Rectangle platformSpawn = new Rectangle(125, WindowManager.height - 75, 100, PlatformManager.floorHeight);
-	public static Rectangle character = new Rectangle(275, WindowManager.height - 70,
+	public static Rectangle character = new Rectangle(285, WindowManager.height - 88,
 			CharacterManager.characterWidth, CharacterManager.characterHeight);
 
 	public static void checkMouse(){

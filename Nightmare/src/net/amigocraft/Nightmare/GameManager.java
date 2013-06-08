@@ -145,6 +145,7 @@ public class GameManager extends JPanel implements Runnable {
 					}
 				}
 				else if (e.getKeyCode() == CharacterManager.keyPause){
+					System.out.println(state);
 					if (state == GAME)
 						state = PAUSED;
 					else if (state == PAUSED)
@@ -359,7 +360,7 @@ public class GameManager extends JPanel implements Runnable {
 			BufferedInputStream bIs = new BufferedInputStream(is);
 			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
-			//clip.loop(Clip.LOOP_CONTINUOUSLY);
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
 		}
 		catch (UnknownHostException ex){
 			System.err.println("Failed to retrieve audio from online host due to UnknownHostException. Either I forgot to renew my site's domain, or you don't have an Internet connection.");
@@ -746,7 +747,7 @@ public class GameManager extends JPanel implements Runnable {
 		}
 
 		// draw the pause menu
-		else if (state == PAUSED){
+		if (state == PAUSED){
 
 			// draw buttons
 			createButton(g, resBtn, defColor, hoverColor, "Resume Nightmare", textColor);
