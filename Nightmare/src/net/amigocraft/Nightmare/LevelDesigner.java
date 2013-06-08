@@ -9,9 +9,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -237,8 +242,46 @@ public class LevelDesigner {
 				);
 	}
 
-	public static void chooseLoad(){
-		//TODO: Open system load dialogue
+	public static void chooseLoad(Component c){
+		final JFileChooser fc = new JFileChooser();
+		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nmc)", new String[] {"nmc"});
+		fc.setFileFilter(filter);
+		int returnVal = fc.showOpenDialog(c);
+		if (returnVal == JFileChooser.APPROVE_OPTION){
+			String fPath = fc.getSelectedFile().getAbsolutePath();
+			if (!fPath.endsWith(".nmc"))
+				fPath += ".nmc";
+			f = new File(fPath);
+
+			InputStream fis;
+			BufferedReader br;
+			String line;
+			try {
+				fis = new FileInputStream(f);
+				br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+				while ((line = br.readLine()) != null) {
+					if (line.startsWith("p")){
+
+					}
+					else if (line.startsWith("e")){
+						String[] el = new
+						entities.add(new Entity(line.split, returnVal, line))
+					}
+					else if (line.startsWith("#")){}
+					else {
+						GameManager.state = State.LOAD_FAIL;
+						break;
+					}
+				}
+				br.close();
+			}
+			catch (Exception ex){
+				ex.printStackTrace();
+				GameManager.state = State.LOAD_FAIL;
+			}
+			br = null;
+			fis = null;
+		}
 	}
 
 	public static void chooseSave(Component c){
@@ -253,6 +296,48 @@ public class LevelDesigner {
 			f = new File(fPath);
 			generateFile();
 		}
+	}
+	
+	public static void loadLevel(Component c){
+		final JFileChooser fc = new JFileChooser();
+		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nmc)", new String[] {"nmc"});
+		fc.setFileFilter(filter);
+		int returnVal = fc.showOpenDialog(c);
+		if (returnVal == JFileChooser.APPROVE_OPTION){
+			String fPath = fc.getSelectedFile().getAbsolutePath();
+			if (!fPath.endsWith(".nmc"))
+				fPath += ".nmc";
+			f = new File(fPath);
+
+			InputStream fis;
+			BufferedReader br;
+			String line;
+			try {
+				fis = new FileInputStream(f);
+				br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+				while ((line = br.readLine()) != null) {
+					if (line.startsWith("p")){
+
+					}
+					else if (line.startsWith("e")){
+
+					}
+					else if (line.startsWith("#")){}
+					else {
+						GameManager.state = State.LOAD_FAIL;
+						break;
+					}
+				}
+				br.close();
+			}
+			catch (Exception ex){
+				ex.printStackTrace();
+				GameManager.state = State.LOAD_FAIL;
+			}
+			br = null;
+			fis = null;
+		}
+		GameManager.state = State.GAME;
 	}
 
 }

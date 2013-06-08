@@ -72,12 +72,14 @@ public class GameManager extends JPanel implements Runnable {
 	// define level creator buttons
 	Rectangle newBtn = playBtn;
 	Rectangle loadBtn = lcBtn;
+	Rectangle lcPlayBtn = lbBtn;
 	Rectangle lcResBtn = playBtn;
 	Rectangle lcSaveBtn = lcBtn;
 	Rectangle lcQuitBtn = lbBtn;
 	Rectangle lcYesBtn = playBtn;
 	Rectangle lcNoBtn = lcBtn;
 	Rectangle lcCancelBtn = lbBtn;
+	Rectangle backBtn = playBtn;
 
 	// define pause menu buttons
 	Rectangle resBtn = new Rectangle(WindowManager.width / 2 - 80, 150, 160, 40);
@@ -297,8 +299,13 @@ public class GameManager extends JPanel implements Runnable {
 							else if (state == LC_SELECT){
 								if (newBtn.contains(mousePos))
 									state = LEVEL_CREATOR;
-								//else if (loadBtn.contains(mousePos))
-								//state = LEVEL_CREATOR;
+								else if (loadBtn.contains(mousePos)){
+									LevelDesigner.initialize();
+									LevelDesigner.chooseLoad(GameManager.this);
+									state = LEVEL_CREATOR;
+								}
+								//else if (lcPlayBtn.contains(mousePos))
+								//	LevelDesigner.loadLevel(GameManager.this);
 							}
 							else if (state == LC_MENU){
 								if (lcResBtn.contains(mousePos))
@@ -324,6 +331,10 @@ public class GameManager extends JPanel implements Runnable {
 									LevelDesigner.chooseSave(GameManager.this);
 								else if (lcCancelBtn.contains(mousePos))
 									state = LC_MENU;
+							}
+							else if (state == LOAD_FAIL){
+								if (backBtn.contains(mousePos))
+									state = LC_SELECT;
 							}
 						}
 					}
@@ -686,7 +697,8 @@ public class GameManager extends JPanel implements Runnable {
 		else if (state == LC_SELECT){
 
 			createButton(g, newBtn, defColor, hoverColor, "New Level", textColor);
-			createButton(g, loadBtn, defColor, hoverColor, "Load Level", textColor, true);
+			createButton(g, loadBtn, defColor, hoverColor, "Load Level", textColor);
+			createButton(g, lcPlayBtn, defColor, hoverColor, "Play Level", textColor, true);
 
 		}
 		else if (state == LEVEL_CREATOR){
@@ -719,6 +731,14 @@ public class GameManager extends JPanel implements Runnable {
 			g.drawString(s, centerText(g, s), 100);
 			createButton(g, lcYesBtn, defColor, hoverColor, "Yes", textColor);
 			createButton(g, lcNoBtn, defColor, hoverColor, "No", textColor);
+		}
+		
+		else if (state == LOAD_FAIL){
+			g.setColor(PlatformManager.floorColor);
+			g.setFont(new Font("Verdana", Font.BOLD, 20));
+			String s = "Failed to load level from file!";
+			g.drawString(s, centerText(g, s), 100);
+			createButton(g, backBtn, defColor, hoverColor, "Back", textColor);
 		}
 
 		// draw the pause menu
