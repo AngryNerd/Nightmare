@@ -269,13 +269,13 @@ public class CharacterManager {
 			else if (lastDir == 1)
 				charSprite = boyStandRight;
 		}
-		
+
 		if (flyUp){
 			character.y -= 1;
 			ys -= 1;
 			centerY -= 1;
 		}
-		
+
 		else if (flyDown){
 			character.y += 1;
 			ys += 1;
@@ -350,13 +350,15 @@ public class CharacterManager {
 		// check if character intersects coins
 		List<Entity> destroyEntities = new ArrayList<Entity>();
 		for (Entity e : EntityManager.entities){
-			if (e.checkPlayerIntersect() && e.getType().equals("coin")){
-				if (GameManager.superCoins)
-					GameManager.score += GameManager.coinValue * 10;
-				else
-					GameManager.score += GameManager.coinValue;
-				GameManager.playSound("/sounds/coin.wav");
-				destroyEntities.add(e);
+			if (e.getLevel() == GameManager.level){
+				if (e.checkPlayerIntersect() && e.getType().equals("coin")){
+					if (GameManager.superCoins)
+						GameManager.score += GameManager.coinValue * 10;
+					else
+						GameManager.score += GameManager.coinValue;
+					GameManager.playSound("/sounds/coin.wav");
+					destroyEntities.add(e);
+				}
 			}
 		}
 		for (Entity e : destroyEntities){

@@ -1,5 +1,7 @@
 package net.amigocraft.Nightmare;
 
+import static net.amigocraft.Nightmare.Direction.LEFT;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -31,7 +33,7 @@ public class LevelDesigner {
 	public static List<Entity> entities = new ArrayList<Entity>();
 	public static Rectangle selectedPlatform = null;
 	public static Entity selectedEntity = null;
-	public static String selectedType = null;
+	public static boolean selectedChar = false;
 	public static boolean drag = false;
 
 	public static File f = null;
@@ -47,6 +49,8 @@ public class LevelDesigner {
 
 	public static Rectangle hotbar = new Rectangle(100, WindowManager.height - 95, WindowManager.width - 200, 75);
 	public static Rectangle platformSpawn = new Rectangle(125, WindowManager.height - 75, 100, PlatformManager.floorHeight);
+	public static Rectangle character = new Rectangle(275, WindowManager.height - 70,
+			CharacterManager.characterWidth, CharacterManager.characterHeight);
 
 	public static void checkMouse(){
 		if (WindowManager.f.getMousePosition() != null){
@@ -91,11 +95,16 @@ public class LevelDesigner {
 							break;
 						}
 					}
+					if (character.contains(mousePos)){
+						offset = new int[]{mousePos.x - (int)character.getX(), mousePos.y - (int)character.getY()};
+						selectedChar = true;
+						drag = true;
+					}
 				}
 				lastClick = System.currentTimeMillis();
 			}
 
-			if (drag && (selectedPlatform != null || selectedEntity != null)){
+			if (drag && (selectedPlatform != null || selectedEntity != null || selectedChar)){
 				if (selectedPlatform != null){
 					platforms.remove(selectedPlatform);
 					selectedPlatform = new Rectangle(mousePos.x - offset[0] + xs, mousePos.y - offset[1] + ys,
@@ -107,6 +116,10 @@ public class LevelDesigner {
 					selectedEntity.setX(mousePos.x - offset[0] + xs);
 					selectedEntity.setY(mousePos.y - offset[1] + ys);
 					entities.add(selectedEntity);
+				}
+				else if (selectedChar){
+					character.x = mousePos.x - offset[0] + xs;
+					character.y = mousePos.y - offset[1] + ys;
 				}
 			}
 		}
@@ -132,8 +145,10 @@ public class LevelDesigner {
 				StringBuilder content = new StringBuilder();
 				BufferedWriter bw = new BufferedWriter(fw);
 
+				content.append("p " + character.x + " " + character.y + "\n");
+
 				for (Rectangle r : platforms)
-					content.append("p " + r.x + " " + r.y + " " + r.width + " " + r.height + "\n");
+					content.append("f " + r.x + " " + r.y + " " + r.width + " " + r.height + "\n");
 
 				for (Entity e : entities)
 					content.append("e " + e.getType() + " " + e.getX() + " " + e.getY() + "\n");
@@ -173,6 +188,7 @@ public class LevelDesigner {
 		for (Entity e : entities)
 			g.drawImage(LivingEntityManager.enemySprites.get(e.getType()).get(e.aniFrame),
 					e.getX() - xs, e.getY() - ys, null);
+		g.drawImage(CharacterManager.boyStandFront, character.x - xs, character.y - ys, null);
 
 		// draw static objects (spawns)
 		g.fillRect(platformSpawn.x, platformSpawn.y, platformSpawn.width, platformSpawn.height);
@@ -197,6 +213,7 @@ public class LevelDesigner {
 				if (e.getButton() == 1){
 					selectedPlatform = null;
 					selectedEntity = null;
+					selectedChar = false;
 					drag = false;
 				}
 			}
@@ -244,13 +261,13 @@ public class LevelDesigner {
 
 	public static void chooseLoad(Component c){
 		final JFileChooser fc = new JFileChooser();
-		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nmc)", new String[] {"nmc"});
+		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nml)", new String[] {"nml"});
 		fc.setFileFilter(filter);
 		int returnVal = fc.showOpenDialog(c);
 		if (returnVal == JFileChooser.APPROVE_OPTION){
 			String fPath = fc.getSelectedFile().getAbsolutePath();
-			if (!fPath.endsWith(".nmc"))
-				fPath += ".nmc";
+			if (!fPath.endsWith(".nml"))
+				fPath += ".nml";
 			f = new File(fPath);
 
 			InputStream fis;
@@ -260,18 +277,23 @@ public class LevelDesigner {
 				fis = new FileInputStream(f);
 				br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
 				while ((line = br.readLine()) != null) {
-					if (line.startsWith("p")){
+					if (line.startsWith("f ")){
 						String[] el = line.split(" ");
 						platforms.add(new Rectangle(Integer.parseInt(el[1]),
 								Integer.parseInt(el[2]),
 								Integer.parseInt(el[3]),
 								Integer.parseInt(el[4])));
 					}
-					else if (line.startsWith("e")){
+					else if (line.startsWith("e ")){
 						String[] el = line.split(" ");
 						entities.add(new Entity(Integer.parseInt(el[2]),
 								Integer.parseInt(el[3]),
 								el[1]));
+					}
+					else if (line.startsWith("p ")){
+						String[] el = line.split(" ");
+						character.x = Integer.parseInt(el[1]);
+						character.y = Integer.parseInt(el[2]);
 					}
 					else if (line.startsWith("#")){}
 					else {
@@ -288,32 +310,50 @@ public class LevelDesigner {
 			br = null;
 			fis = null;
 		}
+		//TODO: Handle cancellation
 	}
 
 	public static void chooseSave(Component c){
 		final JFileChooser fc = new JFileChooser();
-		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nmc)", new String[] {"nmc"});
+		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nml)", new String[] {"nml"});
 		fc.setFileFilter(filter);
 		int returnVal = fc.showSaveDialog(c);
 		if (returnVal == JFileChooser.APPROVE_OPTION){
 			String fPath = fc.getSelectedFile().getAbsolutePath();
-			if (!fPath.endsWith(".nmc"))
-				fPath += ".nmc";
+			if (!fPath.endsWith(".nml"))
+				fPath += ".nml";
 			f = new File(fPath);
 			generateFile();
 		}
+		//TODO: Handle cancellation
 	}
-	
+
 	public static void loadLevel(Component c){
 		final JFileChooser fc = new JFileChooser();
-		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nmc)", new String[] {"nmc"});
+		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nml)", new String[] {"nml"});
 		fc.setFileFilter(filter);
 		int returnVal = fc.showOpenDialog(c);
 		if (returnVal == JFileChooser.APPROVE_OPTION){
+			int cx = 0;
+			int cy = 0;
 			String fPath = fc.getSelectedFile().getAbsolutePath();
-			if (!fPath.endsWith(".nmc"))
-				fPath += ".nmc";
+			if (!fPath.endsWith(".nml"))
+				fPath += ".nml";
 			f = new File(fPath);
+
+			for (Enemy e : LivingEntityManager.enemies)
+				if (e.getLevel() == 0)
+					LivingEntityManager.enemies.remove(e);
+
+			List<Integer> removeIndices = new ArrayList<Integer>();
+			for (int i = 0; i < PlatformManager.floorLevel.size(); i++)
+				if (PlatformManager.floorLevel.get(i) == 0){
+					PlatformManager.floors.remove(i);
+					removeIndices.add(i);
+				}
+			for (Integer i : removeIndices){
+				PlatformManager.floorLevel.remove(i.intValue());
+			}
 
 			InputStream fis;
 			BufferedReader br;
@@ -322,11 +362,31 @@ public class LevelDesigner {
 				fis = new FileInputStream(f);
 				br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
 				while ((line = br.readLine()) != null) {
-					if (line.startsWith("p")){
-
+					if (line.startsWith("f ")){
+						String[] el = line.split(" ");
+						PlatformManager.createFloor(Integer.parseInt(el[1]),
+								Integer.parseInt(el[2]),
+								Integer.parseInt(el[3]),
+								0);
 					}
-					else if (line.startsWith("e")){
-
+					else if (line.startsWith("e ")){
+						System.out.println(line);
+						String[] el = line.split(" ");
+						LivingEntityManager.createEnemy(Integer.parseInt(el[2]),
+								Integer.parseInt(el[3]),
+								el[1], 0);
+						LivingEntityManager.enemies.add(new Enemy(el[1], 0,
+								LivingEntityManager.enemySprites.get(el[1]),
+								LivingEntityManager.enemySpritesF.get(el[1]),
+								new int[]{Integer.parseInt(el[2]) -
+							(LivingEntityManager.enemyDim.get(el[1])[0] / 2),
+							Integer.parseInt(el[3]) - (LivingEntityManager.enemyDim.get(el[1])[1])}, LEFT,
+							LivingEntityManager.enemyDim.get(el[1])));
+					}
+					else if (line.startsWith("p ")){
+						String[] el = line.split(" ");
+						cx = Integer.parseInt(el[1]);
+						cy = Integer.parseInt(el[2]);
 					}
 					else if (line.startsWith("#")){}
 					else {
@@ -342,8 +402,13 @@ public class LevelDesigner {
 			}
 			br = null;
 			fis = null;
+			GameManager.level = 0;
+			GameManager.resetLevel();
+			CharacterManager.character.x = cx;
+			CharacterManager.character.y = cy;
+			GameManager.state = State.GAME;
+			//TODO: Handle cancellation
 		}
-		GameManager.state = State.GAME;
 	}
 
 }

@@ -304,8 +304,8 @@ public class GameManager extends JPanel implements Runnable {
 									LevelDesigner.chooseLoad(GameManager.this);
 									state = LEVEL_CREATOR;
 								}
-								//else if (lcPlayBtn.contains(mousePos))
-								//	LevelDesigner.loadLevel(GameManager.this);
+								else if (lcPlayBtn.contains(mousePos))
+									LevelDesigner.loadLevel(GameManager.this);
 							}
 							else if (state == LC_MENU){
 								if (lcResBtn.contains(mousePos))
@@ -562,12 +562,14 @@ public class GameManager extends JPanel implements Runnable {
 			// enemies
 			g.setColor(Color.WHITE);
 			for (Enemy e : LivingEntityManager.enemies){
-				Image sprite = null;
-				if (e.getDirection() == LEFT)
-					sprite = e.getSpritesF().get(e.getAnimationStage());
-				else
-					sprite = e.getSprites().get(e.getAnimationStage());
-				g.drawImage(sprite, e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
+				if (e.getLevel() == level){
+					Image sprite = null;
+					if (e.getDirection() == LEFT)
+						sprite = e.getSpritesF().get(e.getAnimationStage());
+					else
+						sprite = e.getSprites().get(e.getAnimationStage());
+					g.drawImage(sprite, e.getX() - CharacterManager.xs, e.getY() - CharacterManager.ys, this);
+				}
 			}
 
 			// floors
@@ -581,16 +583,18 @@ public class GameManager extends JPanel implements Runnable {
 			// coins
 			List<Entity> drawEntities = new ArrayList<Entity>();
 			for (Entity e : EntityManager.entities){
-				drawEntities.add(e);
-				if (state == GAME){
-					if (e.aniTick < e.aniDelay)
-						e.aniTick += 1;
-					else {
-						e.aniTick = 0;
-						if (e.aniFrame < EntityManager.coinSprites.size() - 1)
-							e.aniFrame += 1;
-						else
-							e.aniFrame = 0;
+				if (e.getLevel() == level){
+					drawEntities.add(e);
+					if (state == GAME){
+						if (e.aniTick < e.aniDelay)
+							e.aniTick += 1;
+						else {
+							e.aniTick = 0;
+							if (e.aniFrame < EntityManager.coinSprites.size() - 1)
+								e.aniFrame += 1;
+							else
+								e.aniFrame = 0;
+						}
 					}
 				}
 			}
@@ -685,7 +689,7 @@ public class GameManager extends JPanel implements Runnable {
 
 			g.setColor(textColor);
 			g.setFont(font);
-			if (level < totalLevels){
+			if (level < totalLevels && level > 0){
 				g.drawString("Level Complete!", centerText(g, "Level Complete!"), 150);
 				createButton(g, nextBtn, defColor, hoverColor, "Next Level", textColor);
 			}
@@ -698,7 +702,7 @@ public class GameManager extends JPanel implements Runnable {
 
 			createButton(g, newBtn, defColor, hoverColor, "New Level", textColor);
 			createButton(g, loadBtn, defColor, hoverColor, "Load Level", textColor);
-			createButton(g, lcPlayBtn, defColor, hoverColor, "Play Level", textColor, true);
+			createButton(g, lcPlayBtn, defColor, hoverColor, "Play Level", textColor);
 
 		}
 		else if (state == LEVEL_CREATOR){
@@ -707,13 +711,13 @@ public class GameManager extends JPanel implements Runnable {
 			//LevelDesigner.checkClick();
 			LevelDesigner.drawObjects(g);
 		}
-		
+
 		else if (state == LC_MENU){
 			createButton(g, lcResBtn, defColor, hoverColor, "Resume Editing", textColor);
 			createButton(g, lcSaveBtn, defColor, hoverColor, "Save Level", textColor);
 			createButton(g, lcQuitBtn, defColor, hoverColor, "Quit Editor", textColor);
 		}
-		
+
 		else if (state == LC_OW){
 			g.setColor(PlatformManager.floorColor);
 			g.setFont(new Font("Verdana", Font.BOLD, 20));
@@ -723,7 +727,7 @@ public class GameManager extends JPanel implements Runnable {
 			createButton(g, lcNoBtn, defColor, hoverColor, "Choose Another", textColor);
 			createButton(g, lcCancelBtn, defColor, hoverColor, "Cancel", textColor);
 		}
-		
+
 		else if (state == LC_CONFIRM){
 			g.setColor(PlatformManager.floorColor);
 			g.setFont(new Font("Verdana", Font.BOLD, 20));
@@ -732,7 +736,7 @@ public class GameManager extends JPanel implements Runnable {
 			createButton(g, lcYesBtn, defColor, hoverColor, "Yes", textColor);
 			createButton(g, lcNoBtn, defColor, hoverColor, "No", textColor);
 		}
-		
+
 		else if (state == LOAD_FAIL){
 			g.setColor(PlatformManager.floorColor);
 			g.setFont(new Font("Verdana", Font.BOLD, 20));
