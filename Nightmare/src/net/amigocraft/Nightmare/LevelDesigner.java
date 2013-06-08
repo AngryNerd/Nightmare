@@ -261,11 +261,17 @@ public class LevelDesigner {
 				br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
 				while ((line = br.readLine()) != null) {
 					if (line.startsWith("p")){
-
+						String[] el = line.split(" ");
+						platforms.add(new Rectangle(Integer.parseInt(el[1]),
+								Integer.parseInt(el[2]),
+								Integer.parseInt(el[3]),
+								Integer.parseInt(el[4])));
 					}
 					else if (line.startsWith("e")){
-						String[] el = new
-						entities.add(new Entity(line.split, returnVal, line))
+						String[] el = line.split(" ");
+						entities.add(new Entity(Integer.parseInt(el[2]),
+								Integer.parseInt(el[3]),
+								el[1]));
 					}
 					else if (line.startsWith("#")){}
 					else {
