@@ -304,7 +304,7 @@ public class GameManager extends JPanel implements Runnable {
 								if (lcResBtn.contains(mousePos))
 									state = LEVEL_CREATOR;
 								else if (lcSaveBtn.contains(mousePos)){
-									LevelDesigner.chooseSave();
+									LevelDesigner.chooseSave(GameManager.this);
 								}
 								else if (lcQuitBtn.contains(mousePos))
 									state = LC_CONFIRM;
@@ -316,12 +316,14 @@ public class GameManager extends JPanel implements Runnable {
 									state = LC_MENU;
 							}
 							else if (state == LC_OW){
-								if (lcYesBtn.contains(mousePos))
-									LevelDesigner.chooseLoad();
+								if (lcYesBtn.contains(mousePos)){
+									LevelDesigner.overwriteFile();
+									state = LC_MENU;
+								}
 								else if (lcNoBtn.contains(mousePos))
-									LevelDesigner.chooseSave();
+									LevelDesigner.chooseSave(GameManager.this);
 								else if (lcCancelBtn.contains(mousePos))
-									state = MENU;
+									state = LC_MENU;
 							}
 						}
 					}
@@ -346,7 +348,7 @@ public class GameManager extends JPanel implements Runnable {
 			BufferedInputStream bIs = new BufferedInputStream(is);
 			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
-			clip.loop(Clip.LOOP_CONTINUOUSLY);
+			//clip.loop(Clip.LOOP_CONTINUOUSLY);
 		}
 		catch (UnknownHostException ex){
 			System.err.println("Failed to retrieve audio from online host due to UnknownHostException. Either I forgot to renew my site's domain, or you don't have an Internet connection.");
@@ -696,7 +698,7 @@ public class GameManager extends JPanel implements Runnable {
 		
 		else if (state == LC_MENU){
 			createButton(g, lcResBtn, defColor, hoverColor, "Resume Editing", textColor);
-			createButton(g, lcSaveBtn, defColor, hoverColor, "Save Level", textColor, true);
+			createButton(g, lcSaveBtn, defColor, hoverColor, "Save Level", textColor);
 			createButton(g, lcQuitBtn, defColor, hoverColor, "Quit Editor", textColor);
 		}
 		

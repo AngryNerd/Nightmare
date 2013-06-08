@@ -1,6 +1,7 @@
 package net.amigocraft.Nightmare;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -14,6 +15,9 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
 public class LevelDesigner {
 
 	public static boolean initialized = false;
@@ -25,9 +29,13 @@ public class LevelDesigner {
 	public static String selectedType = null;
 	public static boolean drag = false;
 
+	public static File f = null;
+
 	public static int xs = 0;
 	public static int ys = 0;
-	
+
+	public static long lastClick = 0;
+
 	public static boolean left, right, up, down = false;
 
 	public static int[] offset = new int[2];
@@ -38,45 +46,48 @@ public class LevelDesigner {
 	public static void checkMouse(){
 		if (WindowManager.f.getMousePosition() != null){
 			Point mousePos = new Point(WindowManager.f.getMousePosition().x, WindowManager.f.getMousePosition().y - 24);
-			if (platformSpawn.contains(mousePos) && !drag){
-				offset = new int[]{mousePos.x - (int)platformSpawn.getX(), mousePos.y - (int)platformSpawn.getY()};
-				Rectangle platform = new Rectangle(mousePos.x - offset[0], mousePos.y - offset[1],
-						platformSpawn.width, platformSpawn.height);
-				platforms.add(platform);
-				selectedPlatform = platform;
-				drag = true;
-			}
-			else {
-				for (EntitySpawn es : EntitySpawn.spawns){
-					if (new Rectangle(es.getX(), es.getY(),
-							es.getEntity().getWidth(), es.getEntity().getHeight() + 20).contains(mousePos)){
-						offset = new int[]{mousePos.x - (int)es.getX(),
-								mousePos.y - (int)es.getY()};
-						Entity e = new Entity(es.getX() - offset[0], es.getX() - offset[1],
-								es.getEntity().getType());
-						entities.add(e);
-						selectedEntity = e;
-						drag = true;
+			if (System.currentTimeMillis() - lastClick >= 100){
+				if (platformSpawn.contains(mousePos) && !drag){
+					offset = new int[]{mousePos.x - (int)platformSpawn.getX(), mousePos.y - (int)platformSpawn.getY()};
+					Rectangle platform = new Rectangle(mousePos.x - offset[0], mousePos.y - offset[1],
+							platformSpawn.width, platformSpawn.height);
+					platforms.add(platform);
+					selectedPlatform = platform;
+					drag = true;
+				}
+				else {
+					for (EntitySpawn es : EntitySpawn.spawns){
+						if (new Rectangle(es.getX(), es.getY(),
+								es.getEntity().getWidth(), es.getEntity().getHeight() + 20).contains(mousePos)){
+							offset = new int[]{mousePos.x - (int)es.getX(),
+									mousePos.y - (int)es.getY()};
+							Entity e = new Entity(es.getX() - offset[0], es.getX() - offset[1],
+									es.getEntity().getType());
+							entities.add(e);
+							selectedEntity = e;
+							drag = true;
+						}
 					}
 				}
-			}
-			if (!drag){
-				for (Rectangle r : platforms){
-					if (new Rectangle(r.x - xs, r.y - ys, r.width, r.height).contains(mousePos)){
-						offset = new int[]{mousePos.x - r.x + xs, mousePos.y - r.y + ys};
-						selectedPlatform = r;
-						drag = true;
-						break;
+				if (!drag){
+					for (Rectangle r : platforms){
+						if (new Rectangle(r.x - xs, r.y - ys, r.width, r.height).contains(mousePos)){
+							offset = new int[]{mousePos.x - r.x + xs, mousePos.y - r.y + ys};
+							selectedPlatform = r;
+							drag = true;
+							break;
+						}
+					}
+					for (Entity e : entities){
+						if (new Rectangle(e.getX() - xs, e.getY() - ys, e.getWidth(), e.getHeight()).contains(mousePos)){
+							offset = new int[]{mousePos.x - e.getX() + xs, mousePos.y - e.getY() + ys};
+							selectedEntity = e;
+							drag = true;
+							break;
+						}
 					}
 				}
-				for (Entity e : entities){
-					if (new Rectangle(e.getX() - xs, e.getY() - ys, e.getWidth(), e.getHeight()).contains(mousePos)){
-						offset = new int[]{mousePos.x - e.getX() + xs, mousePos.y - e.getY() + ys};
-						selectedEntity = e;
-						drag = true;
-						break;
-					}
-				}
+				lastClick = System.currentTimeMillis();
 			}
 
 			if (drag && (selectedPlatform != null || selectedEntity != null)){
@@ -96,34 +107,46 @@ public class LevelDesigner {
 		}
 	}
 
-	public static boolean generateFile(File file){
-		if (file.exists()){
-			GameManager.state = State.LC_OW;
-		}
-		try {
-			file.createNewFile();
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			StringBuilder content = new StringBuilder();
-			BufferedWriter bw = new BufferedWriter(fw);
-
-			for (Rectangle r : platforms)
-				content.append("p " + r.x + " " + r.y + " " + r.width + " " + r.height);
-
-			for (Entity e : entities)
-				content.append("e " + e.getType() + e.getX() + e.getY());
-
-			bw.write(content.toString());
-			bw.close();
-			return true;
-		}
-		catch (Exception ex){
-			ex.printStackTrace();
+	public static boolean generateFile(){
+		if (f != null){
+			if (f.exists()){
+				GameManager.state = State.LC_OW;
+			}
+			else {
+				overwriteFile();
+			}
 		}
 		return false;
 	}
 
+	public static boolean overwriteFile(){
+		if (f != null){
+			try {
+				f.createNewFile();
+				FileWriter fw = new FileWriter(f.getAbsoluteFile());
+				StringBuilder content = new StringBuilder();
+				BufferedWriter bw = new BufferedWriter(fw);
+
+				for (Rectangle r : platforms)
+					content.append("p " + r.x + " " + r.y + " " + r.width + " " + r.height + "\n");
+
+				for (Entity e : entities)
+					content.append("e " + e.getType() + " " + e.getX() + " " + e.getY() + "\n");
+
+				bw.write(content.toString());
+				bw.close();
+				return true;
+			}
+			catch (Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		f = null;
+		return false;
+	}
+
 	public static void drawObjects(Graphics g){
-		
+
 		if (left)
 			xs -= 1;
 		else if (right)
@@ -155,6 +178,10 @@ public class LevelDesigner {
 		g.drawRect(hotbar.x, hotbar.y, hotbar.width, hotbar.height);
 	}
 	public static void initialize(){
+
+		platforms = new ArrayList<Rectangle>();
+		entities = new ArrayList<Entity>();
+
 		GameManager.f.addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent e){
 				if (e.getButton() == 1)
@@ -180,7 +207,7 @@ public class LevelDesigner {
 				else if (e.getKeyCode() == CharacterManager.keyJump || e.getKeyCode() == CharacterManager.keyJump2)
 					up = true;
 			}
-			
+
 			public void keyReleased(KeyEvent e){
 				if (e.getKeyCode() == CharacterManager.keyLeft || e.getKeyCode() == CharacterManager.keyLeft2)
 					left = false;
@@ -209,13 +236,23 @@ public class LevelDesigner {
 						x, y
 				);
 	}
-	
+
 	public static void chooseLoad(){
 		//TODO: Open system load dialogue
 	}
-	
-	public static void chooseSave(){
-		//TODO: Open system save dialogue
+
+	public static void chooseSave(Component c){
+		final JFileChooser fc = new JFileChooser();
+		FileFilter filter = new ExtensionFileFilter("Nightmare Level File (*.nmc)", new String[] {"nmc"});
+		fc.setFileFilter(filter);
+		int returnVal = fc.showSaveDialog(c);
+		if (returnVal == JFileChooser.APPROVE_OPTION){
+			String fPath = fc.getSelectedFile().getAbsolutePath();
+			if (!fPath.endsWith(".nmc"))
+				fPath += ".nmc";
+			f = new File(fPath);
+			generateFile();
+		}
 	}
 
 }
