@@ -356,7 +356,7 @@ public class GameManager extends JPanel implements Runnable {
 	public void playMusic(){
 		try {
 			Clip clip = AudioSystem.getClip();
-			InputStream is = new URL("http://amigocraft.net/audio/nightmare_music.wav").openStream();
+			InputStream is = new URL("http://amigocraft.net/assets/darklullaby.wav").openStream();
 			BufferedInputStream bIs = new BufferedInputStream(is);
 			AudioInputStream aIs = AudioSystem.getAudioInputStream(bIs);
 			clip.open(aIs);
@@ -417,10 +417,10 @@ public class GameManager extends JPanel implements Runnable {
 
 		// define custom fonts
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(45f);
-			smallFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(20f);
-			titleFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(85f);
-			btnFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.TTF")).deriveFont(25f);
+			font = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.ttf")).deriveFont(45f);
+			smallFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.ttf")).deriveFont(20f);
+			titleFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.ttf")).deriveFont(85f);
+			btnFont = Font.createFont(Font.TRUETYPE_FONT, GameManager.class.getClassLoader().getResourceAsStream("fonts/dr.ttf")).deriveFont(25f);
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
